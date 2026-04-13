@@ -6,39 +6,39 @@
 \subsection{Projektumfeld} 
 \label{sec:Projektumfeld}
 \begin{itemize}
-	\item Kurze Vorstellung des Ausbildungsbetriebs (Geschäftsfeld, Mitarbeiterzahl \usw)
-	\item Wer ist Auftraggeber/Kunde des Projekts?
+	\item JournawayGmbH ist ein 2017 gegründetes Reiseunternehmen und bietet Reise-komplett-Pakete an. Derzeit werden rund 160 Mitarbeiter beschäfitgt.
+	\item Das Projekt dient primär dazu die Mitarbeiter im Kundensupport zu entlasten und eine Source of Truth zu etablieren.
 \end{itemize}
 
 
 \subsection{Projektziel} 
 \label{sec:Projektziel}
 \begin{itemize}
-	\item Worum geht es eigentlich?
-	\item Was soll erreicht werden?
+	\item Bei dem Projekt geht es darum einen .NET Microservice zu entwickeln, der mithilfe von RabbitMQ Kundendaten zweier Systeme synchronisiert.
+	\item Am Ende soll erreicht werden, dass die Kundendaten auf beiden Systemen identisch sind.
 \end{itemize}
 
 
 \subsection{Projektbegründung} 
 \label{sec:Projektbegruendung}
 \begin{itemize}
-	\item Warum ist das Projekt sinnvoll (\zB Kosten- oder Zeitersparnis, weniger Fehler)?
-	\item Was ist die Motivation hinter dem Projekt?
+	\item Das Projekt ist sinnvoll, da dadurch veraltete Informationen zu Kunden und manuelle Datenpflege vermieden werden können.
+	\item Dadurch das der Kundenlogin neu hinzugefügt wird ist es notwendig, dass die Kundendaten auf allen Systemen korrekt dargestellt werden.
 \end{itemize}
 
 
 \subsection{Projektschnittstellen} 
 \label{sec:Projektschnittstellen}
 \begin{itemize}
-	\item Mit welchen anderen Systemen interagiert die Anwendung (technische Schnittstellen)?
-	\item Wer genehmigt das Projekt \bzw stellt Mittel zur Verfügung? 
-	\item Wer sind die Benutzer der Anwendung?
-	\item Wem muss das Ergebnis präsentiert werden?
+	\item Die Anwendung interagiert über Event Queues durch RabbitMQ mit einem anderen Microservice 'user-service'. Außerdem kommuniziert die Anwendung über einen HttpClient mit dem CRM 'HubSpot'. Schließlich wird mit einer PostgreSql Datenbank interagiert in der die Synchronisationshistorien gespeichert werden.
+	\item Das Projekt wird innerhalb des Customer Retention Teams bearbeitet und besprochen. 
+	\item Dadurch, dass es sich um einen autonomen Synchronisationsservice handelt gibt es keine direkten Benutzer. Die Synchronisation wird entweder bei der Eingabe von Kundendaten auf der Webseite -oder HubSpot durch Kunden oder Mitarbeiter ausgelöst.
+	\item Das Ergebnis wird am Ende in einem Sprintreview vor anderen Mitarbeitern präsentiert
 \end{itemize}
 
 
 \subsection{Projektabgrenzung} 
 \label{sec:Projektabgrenzung}
 \begin{itemize}
-	\item Was ist explizit nicht Teil des Projekts (\insb bei Teilprojekten)?
+	\item Die Aufnahme der Anwendung in den Livebetrieb ist nicht Teil des Projektes.
 \end{itemize}
