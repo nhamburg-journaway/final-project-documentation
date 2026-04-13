@@ -1,101 +1,134 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Analysephase} 
 \label{sec:Analysephase}
-
+Im Folgenden wird zunächst die bisherige Situation im Unternehmen betrachtet.
+Darauf aufbauend wird untersucht, welchen wirtschaftlichen Nutzen das Projekt bietet.
+Anschließend werden die fachlichen und technischen Anforderungen an die Anwendung beschrieben.
+Zum Abschluss folgt eine Nutzwertanalyse, um den nicht-monetären Nutzen des Projektes zu bewerten.
 
 \subsection{Ist-Analyse} 
 \label{sec:IstAnalyse}
-\begin{itemize}
-	\item Wie ist die bisherige Situation (\zB bestehende Programme, Wünsche der Mitarbeiter)?
-	\item Was gilt es zu erstellen/verbessern?
-\end{itemize}
-
+Aktuell werden kundenbezogene Daten in zwei voneinander getrennten Systemen gespeichert.
+Zum einen im \textit{user-service}, welcher Daten für das Kundenportal verwaltet, und zum anderen im CRM-System \textit{HubSpot}.
+Zwischen beiden Systemen besteht bislang keine eigenständig verwaltete und durchgängig nachvollziehbare Synchronisation.
+Dadurch kann es passieren, dass Kontaktinformationen eines Kunden in beiden Systemen unterschiedlich vorliegen.
+\par\smallskip
+Besonders problematisch ist dies bei Informationen, die für die Kommunikation mit dem Kunden relevant sind.
+Dazu zählen unter anderem die E-Mail-Adresse, der Vorname, der Nachname, die Anrede sowie Kommunikationspräferenzen.
+Werden diese Daten in einem der beiden Systeme geändert, ist nicht sichergestellt, dass die Änderung zuverlässig im jeweils anderen System übernommen wird.
+\par\smallskip
+Zusätzlich existiert bislang keine zentrale Stelle, die nachvollziehbar speichert, wann eine Synchronisation durchgeführt wurde,
+aus welchem System eine Änderung stammt und ob diese erfolgreich verarbeitet wurde.
+Fehler bei der Übertragung könnten dadurch nur mit erhöhtem manuellem Aufwand erkannt und korrigiert werden.
+Ebenso gibt es bisher keine eigenständige technische Lösung, um mit temporären Fehlern, Systemausfällen oder Rate Limits der HubSpot API umzugehen.
+\par\smallskip
+Aus diesem Grund soll mit dem Projekt \textit{Nightcrawler} ein eigenständiger Microservice entwickelt werden,
+der die Synchronisation zwischen beiden Systemen übernimmt.
+Hierzu soll eine PostgreSQL-Datenbank eingeführt werden, in der sowohl der aktuelle Synchronisationszustand
+zwischen Benutzer und Kontakt, als auch die Historie aller Synchronisationsereignisse gespeichert wird.
+\par\smallskip
+Außerdem soll die Kommunikation zwischen den beteiligten Systemen asynchron über RabbitMQ erfolgen.
+Dafür werden drei Event Queues benötigt:
+eine Queue für Änderungen vom \textit{user-service} in Richtung \textit{HubSpot},
+eine Queue für Änderungen von \textit{HubSpot} in Richtung \textit{user-service}
+sowie eine weitere Queue, über die der \textit{user-service} den erfolgreichen Abschluss einer Synchronisation an den \textit{Nightcrawler} zurückmelden kann.
+\par\smallskip
+Die bisherige Situation soll also dahingehend verbessert werden, dass Kundendaten zwischen beiden Systemen automatisch,
+nachvollziehbar und fehlertolerant synchronisiert werden können.
+Zusätzlich soll die neue Anwendung in der Lage sein, Konflikte bei gleichzeitigen Änderungen zu erkennen und nach festgelegten Regeln aufzulösen.
 
 \subsection{Wirtschaftlichkeitsanalyse}
 \label{sec:Wirtschaftlichkeitsanalyse}
-\begin{itemize}
-	\item Lohnt sich das Projekt für das Unternehmen?
-\end{itemize}
+Die Entwicklung des Microservices verursacht zunächst einmalige Projektkosten in Form von Arbeitszeit.
+Für die Umsetzung des Projektes sind insgesamt 80 Stunden vorgesehen.
+Bei einem internen Verrechnungssatz von beispielsweise [70] Euro pro Stunde ergeben sich folgende Entwicklungskosten:
 
+\[
+80 \text{ Stunden} \times [70] \text{ Euro/Stunde} = [5600] \text{ Euro}
+\]
 
-\subsubsection{\gqq{Make or Buy}-Entscheidung}
-\label{sec:MakeOrBuyEntscheidung}
-\begin{itemize}
-	\item Gibt es vielleicht schon ein fertiges Produkt, dass alle Anforderungen des Projekts abdeckt?
-	\item Wenn ja, wieso wird das Projekt trotzdem umgesetzt?
-\end{itemize}
+Dem gegenüber steht der Nutzen, der sich aus der automatisierten Synchronisation von Kundendaten ergibt.
+Ohne eine solche Lösung müssten Abweichungen zwischen den Datenbeständen manuell erkannt, überprüft und korrigiert werden.
+Dies würde insbesondere im Kundensupport und in der technischen Betreuung zusätzlichen Aufwand verursachen.
+\par\smallskip
+Zusätzlich sinkt durch die Anwendung das Risiko, dass veraltete oder fehlerhafte Kontaktdaten in einem der Systeme verwendet werden.
+Dadurch können Fehler in Folgeprozessen reduziert werden, beispielsweise bei der Kundenkommunikation oder bei der Darstellung von Informationen im Kundenportal.
+\par\smallskip
+Wird angenommen, dass durch die automatisierte Synchronisation wöchentlich [2 bis 3] Stunden manueller Aufwand eingespart werden können,
+ergibt sich bei einem internen Stundensatz von [40] Euro ein jährliches Einsparpotenzial von:
 
+\[
+[2{,}5] \text{ Stunden/Woche} \times [40] \text{ Euro/Stunde} \times [52] \text{ Wochen} = [5200] \text{ Euro/Jahr}
+\]
 
-\subsubsection{Projektkosten}
-\label{sec:Projektkosten}
-\begin{itemize}
-	\item Welche Kosten fallen bei der Umsetzung des Projekts im Detail an (\zB Entwicklung, Einführung/Schulung, Wartung)?
-\end{itemize}
+Neben dieser direkten Einsparung entsteht zusätzlicher Nutzen durch eine höhere Datenqualität, bessere Nachvollziehbarkeit und eine geringere Fehleranfälligkeit.
+Das Projekt ist damit wirtschaftlich sinnvoll, da die Entwicklungskosten mittelfristig durch eingesparte Arbeitszeit und verbesserte Prozesse ausgeglichen werden können.
 
-\paragraph{Beispielrechnung (verkürzt)}
-Die Kosten für die Durchführung des Projekts setzen sich sowohl aus Personal-, als auch aus Ressourcenkosten zusammen.
-In Absprache mit der Personalabteilung wird für einen Auszubildenden im dritten Lehrjahr ein Stundensatz von \eur{7,56} und für die anderen Mitarbeiter ein Stundensatz von \eur{25} angesetzt.
-Für die Nutzung von Ressourcen\footnote{Räumlichkeiten, Arbeitsplatzrechner etc.} wird ein Stundensatz von \eur{15} angenommen.
-Die Durchführungszeit des Projekts beträgt 70 Stunden.
-Eine Aufstellung der Kosten befindet sich in Tabelle~\ref{tab:Kostenaufstellung} und sie betragen insgesamt \eur{2739,20}.
-\tabelle{Kostenaufstellung}{tab:Kostenaufstellung}{Kostenaufstellung.tex}
-
-
-\subsubsection{Amortisationsdauer}
-\label{sec:Amortisationsdauer}
-\begin{itemize}
-	\item Welche monetären Vorteile bietet das Projekt (\zB Einsparung von Lizenzkosten, Arbeitszeitersparnis, bessere Usability, Korrektheit)?
-	\item Wann hat sich das Projekt amortisiert?
-\end{itemize}
-
-\paragraph{Beispielrechnung (verkürzt)}
-Bei einer Zeiteinsparung von 10 Minuten am Tag für jeden der 25 Anwender und 220 Arbeitstagen im Jahr ergibt sich eine gesamte Zeiteinsparung von 
-\begin{eqnarray}
-25 \cdot 220 \mbox{ Tage/Jahr} \cdot 10 \mbox{ min/Tag} = 55000 \mbox{ min/Jahr} \approx 917 \mbox{ h/Jahr} 
-\end{eqnarray}
-
-Dadurch ergibt sich eine jährliche Einsparung von 
-\begin{eqnarray}
-917 \mbox{h} \cdot \eur{(25 + 15)}{\mbox{/h}} = \eur{36680}
-\end{eqnarray}
-
-Die Amortisationszeit beträgt also $\frac{\eur{2739,20}}{\eur{36680}\mbox{/Jahr}} \approx 0,07 \mbox{ Jahre} \approx 4 \mbox{ Wochen}$.
-
+\subsection{Anforderungsanalyse}
+\label{sec:Anforderungsanalyse}
+Damit das Projektziel erreicht werden kann, muss die Anwendung sowohl fachliche als auch technische Anforderungen erfüllen.
+\par\smallskip
+Fachlich muss der \textit{Nightcrawler} in der Lage sein, Änderungen an Kundendaten zwischen dem \textit{user-service} und \textit{HubSpot} in beide Richtungen zu synchronisieren.
+Dabei sollen mindestens die Datenfelder \textit{email}, \textit{givenName}, \textit{surname}, \textit{salutation} und \textit{CommunicationPreference} berücksichtigt werden.
+\par\smallskip
+Wenn ein Benutzer im \textit{user-service} erstellt oder geändert wird, soll ein entsprechendes Ereignis verarbeitet und die dazugehörigen Daten in \textit{HubSpot} aktualisiert werden.
+Wird ein Benutzer neu erstellt, soll zunächst geprüft werden, ob anhand der E-Mail-Adresse bereits ein passender Kontakt in \textit{HubSpot} existiert.
+Ist dies der Fall, soll dieser Kontakt aktualisiert werden.
+Falls kein Kontakt gefunden wird, soll ein neuer Kontakt erstellt werden.
+\par\smallskip
+Wenn dagegen in \textit{HubSpot} ein Kontakt geändert wird, soll diese Änderung ebenfalls verarbeitet und an den \textit{user-service} weitergegeben werden.
+Kontakte aus \textit{HubSpot}, für die kein passender Benutzer im \textit{user-service} existiert, sollen zunächst ignoriert werden.
+\par\smallskip
+Damit jede Synchronisation nachvollziehbar bleibt, muss jedes verarbeitete Ereignis zunächst in einer Historie gespeichert werden.
+Diese \textit{SyncHistory} soll Informationen zur Quelle des Ereignisses, zum Ereignistyp, zu Benutzer- und Kontaktzuordnung,
+zum Payload, zum Zeitpunkt des Auftretens, zum aktuellen Status sowie zur Anzahl der bisherigen Verarbeitungsversuche enthalten.
+\par\smallskip
+Zusätzlich muss ein \textit{UserContactState} gespeichert werden.
+Dieser dient dazu, die Zuordnung zwischen Benutzer und HubSpot-Kontakt sowie den letzten bekannten Synchronisationsstand zu verwalten.
+Dabei sollen unter anderem die Zeitpunkte der letzten Änderung im \textit{user-service}, der letzten Änderung in \textit{HubSpot}
+und der letzten erfolgreichen Synchronisation gespeichert werden.
+\par\smallskip
+Technisch muss die Anwendung drei Event Queues über RabbitMQ verwenden.
+Da keine Nachrichten bei einem Neustart oder Ausfall verloren gehen sollen, müssen die Hauptqueues als durable Quorum Queues umgesetzt werden.
+Für temporäre Fehler soll eine Retry-Logik mit TTL-basierten Retry Queues eingesetzt werden.
+Nicht behandelbare Fehler sollen in einer Dead-Letter-Queue abgelegt werden.
+\par\smallskip
+Zur Konfliktbehandlung soll eine optimistische Strategie verwendet werden.
+Wenn Daten in beiden Systemen unterschiedlich geändert wurden, soll der Datenstand des \textit{user-service} bevorzugt werden.
+Wird also eine Änderung aus \textit{HubSpot} erkannt, die im Konflikt mit aktuelleren Daten aus dem \textit{user-service} steht,
+soll diese Änderung nicht übernommen, sondern stattdessen eine neue Synchronisation in Richtung \textit{HubSpot} angestoßen werden.
 
 \subsection{Nutzwertanalyse}
 \label{sec:Nutzwertanalyse}
-\begin{itemize}
-	\item Darstellung des nicht-monetären Nutzens (\zB Vorher-/Nachher-Vergleich anhand eines Wirtschaftlichkeitskoeffizienten). 
-\end{itemize}
+Neben dem wirtschaftlichen Nutzen bietet das Projekt auch einen deutlichen nicht-monetären Mehrwert.
+Insbesondere die Datenqualität, die Nachvollziehbarkeit von Änderungen und die technische Stabilität der Synchronisation werden verbessert.
+\par\smallskip
+Vor der Umsetzung des Projektes besteht das Problem, dass Änderungen an Kundendaten nicht zentral nachvollzogen werden können.
+Außerdem ist die Synchronisation zwischen beiden Systemen nicht eigenständig abgesichert, wodurch Fehler bei der Übertragung schwerer zu erkennen sind.
+Mit dem \textit{Nightcrawler} wird eine Lösung geschaffen, die Änderungen dokumentiert, Synchronisationszustände speichert und Fehlerfälle gezielt behandeln kann.
+\par\smallskip
+Zur Bewertung des Nutzwertes werden die Kriterien Datenkonsistenz, Nachvollziehbarkeit, Ausfallsicherheit, Wartbarkeit und Automatisierungsgrad betrachtet.
+Die folgende Matrix stellt einen beispielhaften Vorher-/Nachher-Vergleich dar:
+
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Vorher} & \textbf{Nachher} \\
+\hline
+Datenkonsistenz      & [30] & [2] & [5] \\
+Nachvollziehbarkeit  & [20] & [1] & [5] \\
+Ausfallsicherheit    & [20] & [2] & [4] \\
+Wartbarkeit          & [15] & [2] & [4] \\
+Automatisierungsgrad & [15] & [2] & [5] \\
+\hline
+\end{tabular}
+\end{center}
+
+Aus den beispielhaften Bewertungen ergibt sich, dass der Nutzen der neuen Anwendung vor allem in der zuverlässigeren Verarbeitung,
+der besseren Transparenz und der geringeren manuellen Abhängigkeit liegt.
+\par\smallskip
+Das Projekt verbessert somit nicht nur die technische Grundlage für die Synchronisation von Kundendaten,
+sondern schafft auch eine stabilere und besser wartbare Lösung für zukünftige Erweiterungen.
 
 \paragraph{Beispiel}
 Ein Beispiel für eine Entscheidungsmatrix findet sich in Kapitel~\ref{sec:Architekturdesign}: \nameref{sec:Architekturdesign}.
-
-
-\subsection{Anwendungsfälle}
-\label{sec:Anwendungsfaelle}
-\begin{itemize}
-	\item Welche Anwendungsfälle soll das Projekt abdecken?
-	\item Einer oder mehrere interessante (!) Anwendungsfälle könnten exemplarisch durch ein Aktivitätsdiagramm oder eine \ac{EPK} detailliert beschrieben werden. 
-\end{itemize}
-
-\paragraph{Beispiel}
-Ein Beispiel für ein Use Case-Diagramm findet sich im \Anhang{app:UseCase}.
-
-
-\subsection{Qualitätsanforderungen}
-\label{sec:Qualitaetsanforderungen}
-\begin{itemize}
-	\item Welche Qualitätsanforderungen werden an die Anwendung gestellt (\zB hinsichtlich Performance, Usability, Effizienz \etc (siehe \citet{ISO9126}))?
-\end{itemize}
-
-
-\subsection{Lastenheft/Fachkonzept}
-\label{sec:Lastenheft}
-\begin{itemize}
-	\item Auszüge aus dem Lastenheft/Fachkonzept, wenn es im Rahmen des Projekts erstellt wurde.
-	\item Mögliche Inhalte: Funktionen des Programms (Muss/Soll/Wunsch), User Stories, Benutzerrollen
-\end{itemize}
-
-\paragraph{Beispiel}
-Ein Beispiel für ein Lastenheft findet sich im \Anhang{app:Lastenheft}. 

@@ -1,44 +1,59 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Einleitung}
 \label{sec:Einleitung}
-
+In dieser Dokumentation wird das Projekt 'Bereitstellung eines Microservices
+zur Synchronisation von dezentralisiert gespeicherten Kundendaten' beschrieben, welches im
+Rahmen der Prüfung zum Abschluss der Ausbildung zum Fachinformatiker Anwendungsentwicklung
+durchgeführt wurde. Es wird der Prozess der Entwicklung einer Anwendung dargestellt, die als eigenständiger
+Microservice implementiert wird.
 
 \subsection{Projektumfeld} 
 \label{sec:Projektumfeld}
-\begin{itemize}
-	\item JournawayGmbH ist ein 2017 gegründetes Reiseunternehmen und bietet Reise-komplett-Pakete an. Derzeit werden rund 160 Mitarbeiter beschäfitgt.
-	\item Das Projekt dient primär dazu die Mitarbeiter im Kundensupport zu entlasten und eine Source of Truth zu etablieren.
-\end{itemize}
-
+JournawayGmbH ist ein in Leer ansässiges, 2017 gegründetes Reiseunternehmen und bietet Reise-komplett-Pakete auf ihrer Webseite an. Derzeit werden rund 160 Mitarbeiter beschäftigt
+und unter diesen Mitarbeitern arbeiten über ein Drittel in der internen IT-Abteilung, welche B2C und B2B Lösungen für das Unternehmen zur Verfügung stellt. 
+Aufgaben dieser Abteilung liegen unteranderem darin die Webseite und die dazu gehörigen Daten, wie Buchungsdaten, Kundendaten etc. zu pflegen und zu ermöglichen, 
+dass Preise und Informationen zu Leistungen innerhalb der Produkte stets aktuell sind.  
+\par\smallskip
+Der Auftraggeber des Projektes ist die journawayGmbH selbst.
 
 \subsection{Projektziel} 
 \label{sec:Projektziel}
-\begin{itemize}
-	\item Bei dem Projekt geht es darum einen .NET Microservice zu entwickeln, der mithilfe von RabbitMQ Kundendaten zweier Systeme synchronisiert.
-	\item Am Ende soll erreicht werden, dass die Kundendaten auf beiden Systemen identisch sind.
-\end{itemize}
-
+Journaway stellte in Auftrag ein Produkt zu entwickeln, welches als Schnittstelle Daten von zwei Kundendaten speichernden Systemen miteinander synchronisiert.
+\par\smallskip
+Mit der Entwicklung eines neuen Kundenportals auf der Webseite ist es notwendig, dass Informationen für die Kommunikation zwischen Unternehmen und Kunden
+nicht asynchron vorliegen. Teil dieser Aufgabe ist es einen Microservice zu entwickeln, der durch eventbasierte Synchronisierung die dezentrale
+Verfügbarkeit von Daten auflöst und eine einzige Source of Truth schafft, wodurch die Kundendaten auf beiden Systemen identisch sind.
 
 \subsection{Projektbegründung} 
 \label{sec:Projektbegruendung}
-\begin{itemize}
-	\item Das Projekt ist sinnvoll, da dadurch veraltete Informationen zu Kunden und manuelle Datenpflege vermieden werden können.
-	\item Dadurch das der Kundenlogin neu hinzugefügt wird ist es notwendig, dass die Kundendaten auf allen Systemen korrekt dargestellt werden.
-\end{itemize}
-
+In beiden bisherigen Systemen werden Kundendaten gespeichert, welche keine Relation zu einander haben 
+und können somit für den gleichen Kunden unterschiedlich vorliegen.
+Mit dem neuen Microservice \textit{Nightcrawler} sollen Fehler beim persistieren kundenkontaktrelevanter Informationen minimiert werden.
+Außerdem soll es ermöglichen das im bisherigen CRM \textit{HubSpot} gespeicherte Kundendaten mit dem angemeldeten Kunden
+vom \textit{user-service} verknüpft werden, wodurch im Kundenportal weitere, für den Kunden interessante Informationen dargestellt werden können.    
+\par\smallskip
+Ohne den \textit{Nightcrawler} müssten Mitarbeiter aus dem Kundensupport eigenhändig nach Abweichungen in Kontaktinformationen suchen
+und diese manuell einpflegen. Dies würde einen erhöhten Ressourcenaufwand und eine höhere Anfälligkeit für Fehler bedeuten.
+Ziel ist es, den Erhalt von zentralen und aktuellen Kontaktdaten, ohne manuellen Aufwand zu gewährleisten.
 
 \subsection{Projektschnittstellen} 
 \label{sec:Projektschnittstellen}
-\begin{itemize}
-	\item Die Anwendung interagiert über Event Queues durch RabbitMQ mit einem anderen Microservice 'user-service'. Außerdem kommuniziert die Anwendung über einen HttpClient mit dem CRM 'HubSpot'. Schließlich wird mit einer PostgreSql Datenbank interagiert in der die Synchronisationshistorien gespeichert werden.
-	\item Das Projekt wird innerhalb des Customer Retention Teams bearbeitet und besprochen. 
-	\item Dadurch, dass es sich um einen autonomen Synchronisationsservice handelt gibt es keine direkten Benutzer. Die Synchronisation wird entweder bei der Eingabe von Kundendaten auf der Webseite -oder HubSpot durch Kunden oder Mitarbeiter ausgelöst.
-	\item Das Ergebnis wird am Ende in einem Sprintreview vor anderen Mitarbeitern präsentiert
-\end{itemize}
-
+Die Anwendung interagiert über Event Queues durch RabbitMQ mit einem anderen Microservice \textit{user-service}.
+Durch diesen Service ist es möglich, dass persönliche Informationen, Kommunikationspräferenzen oder Reisende von Websitebesuchern
+erstellt, bearbeitet und gelöscht werden können. Außerdem können die Nutzer dort auch ihre Buchungen einsehen. 
+\par\smallskip
+Zudem kommuniziert die Anwendung über einen HttpClient mit dem CRM \textit{HubSpot}. Dies ist der Ort an dem standardmäßig kundenbezogene Daten
+gespeichert werden. Dieser cloud-basierte Service von dem Unternehmen \textit{HubSpot, Inc.} wird hauptsächlich für die Speicherung von Kontaktdaten, Deals und
+Ausführung von Workflows genutzt. 
+\par\smallskip
+Dadurch, dass es sich um einen autonomen Synchronisationsservice handelt gibt es keine direkten Benutzer, jedoch werden 
+events zur Synchronisierung entweder durch den Websitenutzer oder Mitarbeiter in \textit{HubSpot} ausgelöst.
+Schließlich werden die Synchronisationshistorien zu Kunden in einer PostgreSql Datenbank persistiert.
+\par\smallskip
+Der \textit{user-service}, als auch der \textit{Nightcrawler} sind Microservices aufbauend auf dem .NET 10 Framework von Microsoft und werden auf Servern mit Linux basiertem Betriebssystem
+(Debian 12.13) ausgeführt. Der Quellcode ist in der Sprache CSharp geschrieben. Als Entwicklungsumgebung wird JetBrains Rider 2026 verwendet.   
 
 \subsection{Projektabgrenzung} 
 \label{sec:Projektabgrenzung}
-\begin{itemize}
-	\item Die Aufnahme der Anwendung in den Livebetrieb ist nicht Teil des Projektes.
-\end{itemize}
+Teil dieses Projektes ist die Planung und Entwicklung eines funktionellen und testbaren Prototyps.
+Die Aufnahme der Anwendung in den Livebetrieb wird nicht behandelt.
