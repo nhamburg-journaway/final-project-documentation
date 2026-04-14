@@ -1,6 +1,6 @@
 % !TEX root = ../Projektdokumentation.tex
-\section{Analysephase} 
-\label{sec:Analysephase}
+\section{Analyse} 
+\label{sec:Analyse}
 Im Folgenden wird zunächst die bisherige Situation im Unternehmen betrachtet.
 Darauf aufbauend wird untersucht, welchen wirtschaftlichen Nutzen das Projekt bietet.
 Anschließend werden die fachlichen und technischen Anforderungen an die Anwendung beschrieben.
@@ -110,25 +110,19 @@ Mit dem \textit{Nightcrawler} wird eine Lösung geschaffen, die Änderungen doku
 Zur Bewertung des Nutzwertes werden die Kriterien Datenkonsistenz, Nachvollziehbarkeit, Ausfallsicherheit, Wartbarkeit und Automatisierungsgrad betrachtet.
 Die folgende Matrix stellt einen beispielhaften Vorher-/Nachher-Vergleich dar:
 
-\begin{center}
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Vorher} & \textbf{Nachher} \\
-\hline
-Datenkonsistenz      & [30] & [2] & [5] \\
-Nachvollziehbarkeit  & [20] & [1] & [5] \\
-Ausfallsicherheit    & [20] & [2] & [4] \\
-Wartbarkeit          & [15] & [2] & [4] \\
-Automatisierungsgrad & [15] & [2] & [5] \\
-\hline
+\begin{tabular}{llllll}
+\rowcolor{heading}\textbf{Kriterium}   & \textbf{Gewichtung} & \textbf{Vorher} & \textbf{Nachher}\\
+\textbf{Datenkonsistenz}                       & 5  & 2       & 5       \\
+\rowcolor{odd}\textbf{Nachvollziehbarkeit}     & 3  & 1       & 5       \\
+\textbf{Ausfallsicherheit}                     & 3  & 2       & 4       \\
+\rowcolor{odd}\textbf{Wartbarkeit}             & 2  & 2       & 4       \\
+\textbf{Automatisierungsgrad}                  & 2  & 2       & 5       \\
+\rowcolor{heading}\textbf{Gesamt:}      & \textbf{15} & \textbf{27} & \textbf{70}\\
+\rowcolor{odd}\textbf{Nutzwert:}        &           & \textbf{1,8} & \textbf{4,67}\\
 \end{tabular}
-\end{center}
 
 Aus den beispielhaften Bewertungen ergibt sich, dass der Nutzen der neuen Anwendung vor allem in der zuverlässigeren Verarbeitung,
 der besseren Transparenz und der geringeren manuellen Abhängigkeit liegt.
 \par\smallskip
 Das Projekt verbessert somit nicht nur die technische Grundlage für die Synchronisation von Kundendaten,
 sondern schafft auch eine stabilere und besser wartbare Lösung für zukünftige Erweiterungen.
-
-\paragraph{Beispiel}
-Ein Beispiel für eine Entscheidungsmatrix findet sich in Kapitel~\ref{sec:Architekturdesign}: \nameref{sec:Architekturdesign}.
