@@ -24,7 +24,6 @@ Für genauere technische Abläufe siehe \Anhang{app:Flows}
 
 \subsection{Architekturdesign}
 \label{sec:Architekturdesign}
-\begin{itemize}
 Bei der ausgwählten Architektur handelt es sich um eine eine \texit{Orchestrator-Architektur}, die es ermöglicht
 die Steuerung komplexer Arbeitsabläufe in Microservices zentralisiert auszuführen. Es gibt also ein Orchestrator Project,
 welches das Wissen über Konfigurationen beinhaltet, um andere Services zu registrieren und aufzurufen. Durch die Zentralisierung des Kontrollablaufs
@@ -40,21 +39,19 @@ ohne eine traditionelle Projektdatei zu benötigen.
 Dieses Framework wird regelmäßig erneuert, um den heutigen Standards gerecht zu werden. Außerdem bietet .NET eine große Auswahl an Funktionen und 
 ermöglicht mithilfe von weiteren NuGet Paketen, 
 wie zum Beispiel Entity Framework Core, eine vereinfachte Arbeit mit Entitäten aus Listen, Datenbanken und mehr. 
-\end{itemize}
 
 \subsection{Datenbankstruktur}
 \label{sec:Datenbankstruktur}
 
-\begin{itemize}
-	\item Entwurf/Beschreibung der Datenstrukturen (\zB \acs{ERM} und/oder Tabellenmodell, \acs{XML}-Schemas) mit kurzer Beschreibung der wichtigsten (!) verwendeten Entitäten.
-\end{itemize}
+Die Datenstruktur liegt zur Veranschaulichung im Folgenden als \acs{ERD} vor. Sie besteht aus zwei Tabellen \textit{SyncHistory} und \textit{UserContactState}, 
+welche in einer 1:n Beziehung zu einander stehen. Der \textit{UserContactState} beschreibt einen Nutzer, welcher mit \textit{HubSpot} verknüpft wird und die 
+\textit{SyncHistory} beschreibt alle Aktivitäten, die dieser Nutzer im Bezug auf dessen Daten gemacht hat.
 
-\paragraph{Beispiel}
-In \Abbildung{ER} wird ein \ac{ERM} dargestellt, welches lediglich Entitäten, Relationen und die dazugehörigen Kardinalitäten enthält. 
+\paragraph{Nightcrawler Datenbank}
+Hier wird ein \ac{ERD} dargestellt, welches Attribute, Relationen und die dazugehörigen Multiplizitäten enthält. 
 
 \begin{figure}[htb]
 \centering
-\includegraphicsKeepAspectRatio{ERDiagramm.pdf}{0.6}
-\caption{Vereinfachtes ER-Modell}
-\label{fig:ER}
+\includegraphics[scale=0.6]{NightcrawlerDbERD.png}\\
+\Anhang{app:ERD}
 \end{figure} 
