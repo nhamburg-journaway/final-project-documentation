@@ -28,10 +28,10 @@ Hierzu soll eine PostgreSQL-Datenbank eingeführt werden, in der sowohl der aktu
 zwischen Benutzer und Kontakt, als auch die Historie aller Synchronisationsereignisse gespeichert wird.
 \par\smallskip
 Außerdem soll die Kommunikation zwischen den beteiligten Systemen asynchron über RabbitMQ erfolgen.
-Dafür werden drei Event Queues benötigt:
+Dafür werden acht Event Queues benötigt:
 eine Queue für Änderungen vom \textit{user-service} in Richtung \textit{HubSpot},
 eine Queue für Änderungen von \textit{HubSpot} in Richtung \textit{user-service}
-sowie eine weitere Queue, über die der \textit{user-service} den erfolgreichen Abschluss einer Synchronisation an den \textit{Nightcrawler} zurückmelden kann.
+sowie sechs weitere Queues, die jeweils pro Richtung für zwei erneute Versuche und einen Fehlschlag zuständig sind.
 \par\smallskip
 Die bisherige Situation soll also dahingehend verbessert werden, dass Kundendaten zwischen beiden Systemen automatisch,
 nachvollziehbar und fehlertolerant synchronisiert werden können.
@@ -41,10 +41,10 @@ Zusätzlich soll die neue Anwendung in der Lage sein, Konflikte bei gleichzeitig
 \label{sec:Wirtschaftlichkeitsanalyse}
 Die Entwicklung des Microservices verursacht zunächst einmalige Projektkosten in Form von Arbeitszeit.
 Für die Umsetzung des Projektes sind insgesamt 80 Stunden vorgesehen.
-Bei einem internen Verrechnungssatz von beispielsweise [70] Euro pro Stunde ergeben sich folgende Entwicklungskosten:
+Bei einem internen Verrechnungssatz von 35 Euro Netto pro Stunde ergeben sich folgende Entwicklungskosten:
 
 \[
-80 \text{ Stunden} \times [70] \text{ Euro/Stunde} = [5600] \text{ Euro}
+80 \text{ Stunden} \times 35 \text{ Euro/Stunde} = 2800 \text{ Euro}
 \]
 
 Dem gegenüber steht der Nutzen, der sich aus der automatisierten Synchronisation von Kundendaten ergibt.
@@ -54,11 +54,11 @@ Dies würde insbesondere im Kundensupport und in der technischen Betreuung zusä
 Zusätzlich sinkt durch die Anwendung das Risiko, dass veraltete oder fehlerhafte Kontaktdaten in einem der Systeme verwendet werden.
 Dadurch können Fehler in Folgeprozessen reduziert werden, beispielsweise bei der Kundenkommunikation oder bei der Darstellung von Informationen im Kundenportal.
 \par\smallskip
-Wird angenommen, dass durch die automatisierte Synchronisation wöchentlich [2 bis 3] Stunden manueller Aufwand eingespart werden können,
-ergibt sich bei einem internen Stundensatz von [40] Euro ein jährliches Einsparpotenzial von:
+Wird angenommen, dass durch die automatisierte Synchronisation wöchentlich 2,5 Stunden manueller Aufwand eingespart werden können,
+ergibt sich bei einem internen Stundensatz von 15,50 Euro Netto pro Stunde ein jährliches Einsparpotenzial von:
 
 \[
-[2{,}5] \text{ Stunden/Woche} \times [40] \text{ Euro/Stunde} \times [52] \text{ Wochen} = [5200] \text{ Euro/Jahr}
+2{,}5 \text{ Stunden/Woche} \times 15{,}50 \text{ Euro/Stunde} \times 52 \text{ Wochen} = 2015 \text{ Euro/Jahr}
 \]
 
 Neben dieser direkten Einsparung entsteht zusätzlicher Nutzen durch eine höhere Datenqualität, bessere Nachvollziehbarkeit und eine geringere Fehleranfälligkeit.
@@ -88,7 +88,7 @@ Dieser dient dazu, die Zuordnung zwischen Benutzer und HubSpot-Kontakt sowie den
 Dabei sollen unter anderem die Zeitpunkte der letzten Änderung im \textit{user-service}, der letzten Änderung in \textit{HubSpot}
 und der letzten erfolgreichen Synchronisation gespeichert werden.
 \par\smallskip
-Technisch muss die Anwendung drei Event Queues über RabbitMQ verwenden.
+Technisch muss die Anwendung acht Event Queues über RabbitMQ verwenden.
 Da keine Nachrichten bei einem Neustart oder Ausfall verloren gehen sollen, müssen die Hauptqueues als durable Quorum Queues umgesetzt werden.
 Für temporäre Fehler soll eine Retry-Logik mit TTL-basierten Retry Queues eingesetzt werden.
 Nicht behandelbare Fehler sollen in einer Dead-Letter-Queue abgelegt werden.
@@ -108,20 +108,20 @@ Außerdem ist die Synchronisation zwischen beiden Systemen nicht eigenständig a
 Mit dem \textit{Nightcrawler} wird eine Lösung geschaffen, die Änderungen dokumentiert, Synchronisationszustände speichert und Fehlerfälle gezielt behandeln kann.
 \par\smallskip
 Zur Bewertung des Nutzwertes werden die Kriterien Datenkonsistenz, Nachvollziehbarkeit, Ausfallsicherheit, Wartbarkeit und Automatisierungsgrad betrachtet.
-Die folgende Matrix stellt einen beispielhaften Vorher-/Nachher-Vergleich dar:
+Die folgende Matrix stellt einen Vorher-/Nachher-Vergleich dar:
 
 \begin{tabular}{llllll}
 \rowcolor{heading}\textbf{Kriterium}   & \textbf{Gewichtung} & \textbf{Vorher} & \textbf{Nachher}\\
-\textbf{Datenkonsistenz}                       & 5  & 2       & 5       \\
-\rowcolor{odd}\textbf{Nachvollziehbarkeit}     & 3  & 1       & 5       \\
-\textbf{Ausfallsicherheit}                     & 3  & 2       & 4       \\
-\rowcolor{odd}\textbf{Wartbarkeit}             & 2  & 2       & 4       \\
-\textbf{Automatisierungsgrad}                  & 2  & 2       & 5       \\
-\rowcolor{heading}\textbf{Gesamt:}      & \textbf{15} & \textbf{27} & \textbf{70}\\
-\rowcolor{odd}\textbf{Nutzwert:}        &           & \textbf{1,8} & \textbf{4,67}\\
+\textbf{Datenkonsistenz}                       & 5          & 2             & 5       \\
+\rowcolor{odd}\textbf{Nachvollziehbarkeit}     & 3          & 1             & 5       \\
+\textbf{Ausfallsicherheit}                     & 3          & 2             & 4       \\
+\rowcolor{odd}\textbf{Wartbarkeit}             & 2          & 2             & 4       \\
+\textbf{Automatisierungsgrad}                  & 2          & 2             & 4       \\
+\rowcolor{heading}\textbf{Gesamt:}      & \textbf{15} & \textbf{27} & \textbf{68}\\
+\rowcolor{odd}\textbf{Nutzwert:}        &           & \textbf{1,8} & \textbf{4,53}\\
 \end{tabular}
 
-Aus den beispielhaften Bewertungen ergibt sich, dass der Nutzen der neuen Anwendung vor allem in der zuverlässigeren Verarbeitung,
+Aus den Bewertungen ergibt sich, dass der Nutzen der neuen Anwendung vor allem in der zuverlässigeren Verarbeitung,
 der besseren Transparenz und der geringeren manuellen Abhängigkeit liegt.
 \par\smallskip
 Das Projekt verbessert somit nicht nur die technische Grundlage für die Synchronisation von Kundendaten,

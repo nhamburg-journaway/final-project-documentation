@@ -11,21 +11,36 @@ Das folgende UML-Aktivitätsdiagramm für die Synchronisation in Richtung \texti
 den Ablauf der Synchronisation vom \textit{user-service} ausgehend.
 Angefangen mit der Eingabe der Kontaktdaten vom Nutzer wird ein Event in die Main Queue geschickt.
 Anschließend konsumiert der \textit{Nightcrawler} diese Queue und sendet basierend auf den Daten innerhalb der
-Event Message, einen API Upsert Aufruf an \textit{HubSpot}. Sofern der API Aufruf einen 200 Ok Statuscode zurückliefert
+Event Message, einen API Upsert Aufruf an \textit{HubSpot}. Sofern der API Aufruf einen 201 Created oder 200 Ok Statuscode zurückliefert
 wird das Event als erfolgreich angesehen. Andernfalls wird das Event in eine Retry Queue geschickt und
 nach einer 30 sekündigen \acs{TTL} beim ersten Mal und 60 Sekunden beim zweiten Mal erneut 
-ausgeführt. Wenn das zweite Mal ebenfalls nicht erfolgreich ist, wird das Event ersteinmal in eine \acs{DLQ} geschickt.\\
+ausgeführt. Wenn das zweite Mal ebenfalls nicht erfolgreich ist, wird das Event in eine \acs{DLQ} geschickt.\\
 \par\smallskip
+\begin{figure}[htb]
+\centering
 \includegraphics[scale=0.41]{\uml}\\
+\end{figure}
 Für genauere technische Abläufe siehe \Anhang{app:Flows}
 
 \subsection{Architekturdesign}
 \label{sec:Architekturdesign}
 \begin{itemize}
-	\item Beschreibung und Begründung der gewählten Anwendungsarchitektur (\zB \acs{MVC}).
-	\item \Ggfs Bewertung und Auswahl von verwendeten Frameworks sowie \ggfs eine kurze Einführung in die Funktionsweise des verwendeten Frameworks.
+Bei der ausgwählten Architektur handelt es sich um eine eine \texit{Orchestrator-Architektur}, die es ermöglicht
+die Steuerung komplexer Arbeitsabläufe in Microservices zentralisiert auszuführen. Es gibt also ein Orchestrator Project,
+welches das Wissen über Konfigurationen beinhaltet, um andere Services zu registrieren und aufzurufen. Durch die Zentralisierung des Kontrollablaufs
+und die Entscheidungsgewalt über die nächsten Programmaufrufe, erleichtert der Orchestrator die Koordination verschiedener Services.    
+\par\smallskip
+Die Entwicklung der Anwendung findet innerhalb des Microsoft .NET 10 Frameworks statt. 
+.NET 10, veröffentlicht am 11.  November 2025, ist ein plattformunabhängiges, modulares Framework, das die Entwicklung für Desktop, Web, Mobile, Cloud und IoT vereinfacht. 
+Es basiert auf dem SDK-Modell, das eine gleichzeitige Entwicklung und Ausführung auf Windows, Linux und macOS ermöglicht, 
+und integriert die Laufzeitkomponenten CoreCLR, CoreFX sowie ASP.NET Core. 
+Die Funktionsweise wird durch CSharp 14 geprägt, das Sprachfeatures wie Primary Constructors für alle Typen, Params-Spans für die Speicheroptimierung und Lambda-Verbesserungen bietet. 
+Ein zentraler Meilenstein ist die Dateibasierte App-Unterstützung, die es erlaubt, einzelne *.cs-Dateien direkt auszuführen (dotnet run main.cs), 
+ohne eine traditionelle Projektdatei zu benötigen. 
+Dieses Framework wird regelmäßig erneuert, um den heutigen Standards gerecht zu werden. Außerdem bietet .NET eine große Auswahl an Funktionen und 
+ermöglicht mithilfe von weiteren NuGet Paketen, 
+wie zum Beispiel Entity Framework Core, eine vereinfachte Arbeit mit Entitäten aus Listen, Datenbanken und mehr. 
 \end{itemize}
-
 
 \subsection{Datenbankstruktur}
 \label{sec:Datenbankstruktur}
