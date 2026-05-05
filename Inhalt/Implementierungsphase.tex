@@ -4,34 +4,82 @@
 
 \subsection{Implementierung der Datenstrukturen}
 \label{sec:ImplementierungDatenstrukturen}
+Die PostgreSQL Datenbank \textit{nightcrawler} wurde händisch über \textit{pgAdmin 4} angelegt und nutzt die \textit{libpq-15.dll} Bibliothek. 
+Im Anschluss wurden mithilfe des Paketes \textit{\acs{EF-Core}}, innerhalb der Applikation Migrationen aus Beziehungen zwischen Entitäten erstellt und
+auf die Datenbank angewandt. Ebenfalls wurden dadurch die Tabellen und Eigenschaften angelegt.
 
-\begin{itemize}
-	\item Beschreibung der angelegten Datenbank (\zB Generierung von \acs{SQL} aus Modellierungswerkzeug oder händisches Anlegen), \acs{XML}-Schemas \usw.
-\end{itemize}
+
+\subsection{Implementierung RabbitMQ}
+\label{sec:ImplementierungRabbitMQ}
+Für die Verbindung zwischen dem Microservice \textit{Nightcrawler} und dem Message Broker \textit{RabbitMQ} wurde mithilfe von 
+Serviceregistrierung in der \acs{DI}-Klasse eine \textit{IConnectionFactory} als Singleton mit den Applikationseinstellungen registriert.
+Durch die Registrierung als Singleton können alle Klassen, die eine Verbindung zu \textit{RabbitMQ} benötigen, mit Dependency Injection
+dieselbe Instanz erzeugen. Dadurch müssen nicht alle Klassen die Einstellungen kennen, um die richtige \textit{RabbitMQ} Instanz anzusprechen.
+\par\smallskip
+Um die verschiedenen Queues zu initialisieren wurde ein QueueInitializer erstellt, welcher als \textit{IHostedService} implementiert wird,
+um beim Start der Applikation die Queues zu erstellen bzw. zu versichern, dass sie vorhanden sind. Innerhalb dieses Services wird die Topologie
+für \textit{RabbitMQ} verwaltet. Hier werden die \textit{MainQueues}, \textit{RetryQueues} und \textit{\ac{DLQ}'s} erstellt, die später für
+den Eventverkehr und das Errorhandling benötigt werden.
+\par\smallskip
+Als letztes werden EventPublisher und EventConsumer benötigt, um Events senden und empfangen zu können.
+Hierzu wurde im \textit{user-service} auf Infrastruktur-Ebene ein EventPublisher implementiert, welcher indirekt nach einem \acs{API}-Aufruf,
+die zu synchronisierenden Daten als Event sendet. Der \textit{Nightcrawler} beinhaltet auf Presentations-Ebene den EventConsumer und empfängt die gesendeten Daten,
+um diese dann zu verarbeiten und mit \textit{HubSpot} zu synchronisieren.
+\par\smallskip
+Screenshots der Anwendung in Bezug auf \textit{RabbitMQ} befinden sich im \Anhang{app:RabbitMQConnection}.
 
 
-\subsection{Implementierung der Benutzeroberfläche}
-\label{sec:ImplementierungBenutzeroberflaeche}
+\subsection{Implementierung des HTTP-Clients}
+\label{sec:ImplementierungHTTPClient}
+Um nach dem Empfangen eines Events die Synchronisierung in Richtung \textit{HubSpot} anzustoßen wird ein HTTP-Client benötigt.
+Dafür wurde der \textit{HubSpotApiClient} implementiert, welcher die zu sendenden Daten als Domänen-Model Parameter erhält, 
+diese als Body setzt und damit einen HTTP request ausführt. Dieser Client ermöglicht POST und PATCH Anfragen bzw. das Erstellen und Bearbeiten von Kontaktdatensätzen in \textit{HubSpot}.
+\par\smallskip
+Damit die Anfragen die korrekte \textit{HubSpot} Instanz erreicht benötigt es eine \textit{BaseUrl}, also den ersten Teil einer \acs{URL}, 
+wodurch die Instanz angesprochen wird. Desweiteren wird der Kontaktpfad benötigt, also der Ort, an dem die Kontaktdaten verändert werden können.
+\textit{HubSpot} benötigt für ihre Schnittstellen eine Authorisierung, weshalb der Authorization Header mit Bearer und einem Zugriffstoken für diese HTTP-Anfragen
+zusätzlich benötigt wird.
+\par\smallskip
+Um schließlich alle Anforderungen zu erfüllen wurde ein \textit{HubSpotRateLimiter} implementiert, der dafür sorgt, dass die von \textit{HubSpot}
+festgelegten Anfragebegrenzungen nicht überschritten werden und somit keine Anfragen unnötig fehlschlagen oder verloren gehen.
+\par\smallskip
+Ausschnitte zum \textit{HubSpotApiClient} und \textit{HubSpotRateLimiter} sind im \Anhang{app:HubSpot} zu finden.
 
-\begin{itemize}
-	\item Beschreibung der Implementierung der Benutzeroberfläche, falls dies separat zur Implementierung der Geschäftslogik erfolgt (\zB bei \acs{HTML}-Oberflächen und Stylesheets).
-	\item \Ggfs Beschreibung des Corporate Designs und dessen Umsetzung in der Anwendung.
-	\item Screenshots der Anwendung
-\end{itemize}
 
-\paragraph{Beispiel}
-Screenshots der Anwendung in der Entwicklungsphase mit Dummy-Daten befinden sich im \Anhang{Screenshots}.
-
+\subsection{Implementierung der Synchronisationshistorie}
+\label{sec:ImplementierungSync}
+Um die Synchronisationshistorie persistieren zu können wurden drei Abstraktionsebenen entwickelt, um auf allen Ebenen testbar zu bleiben
+und die Aufteilung von Infrastruktur und Applikationsebene zu erhalten. Konkret handelt es sich dabei um \textit{DbOperations}, \textit{Repositories}
+und Services jeweils pro, den bereits genannten \textit{SyncHistory} und \textit{UserContactState}.
+\par\smallskip
+Die \textit{DbOperations} befinden sich auf der niedrigsten Schicht und sie können einfache Abfragen auf Datenbankebene machen. 
+Außerdem sind neben Testklassen, die einzigen Klassen, die den \textit{DbContext} kennen.
+\par\smallskip
+Bei den \textit{Repositories} handelt es sich, um Klassen, die \textit{DbOperations} implementieren und neben diesen Aufrufen Domänen-Models
+zu Infrastruktur-Models konvertieren. Zudem befindet sich das Logging, Retry- und Errorhandling auf dieser Ebene. Für die Retrylogik wurde das NuGet Paket \textit{Polly}
+verwendet, welches ermöglicht vorkonfigurierte \textit{ResiliencePipelines} zu implementieren, mit denen man fehlerhafte Aufrufe für eine bestimmte Anzahl
+an Wiederholungen erneut ausführen kann.
+\par\smallskip
+Die Services beinhalten \textit{Repository}-Aufrufe, sowie minimale Logik, mit der \textit{Upserts} ermöglicht werden.
+So überprüft man für die \textit{SyncHistory} zum Beispiel anhand der \textit{EventId}, ob es bereits eine Historie gibt. 
+Wenn es keine gibt wird eine erstellt, andernfalls wird sie nur aktualisiert.
+\par\smallskip
+Siehe \Anhang{app:SyncHistory} für Code-Ausschnitte.
 
 \subsection{Implementierung der Geschäftslogik}
 \label{sec:ImplementierungGeschaeftslogik}
-
-\begin{itemize}
-	\item Beschreibung des Vorgehens bei der Umsetzung/Programmierung der entworfenen Anwendung.
-	\item \Ggfs interessante Funktionen/Algorithmen im Detail vorstellen, verwendete Entwurfsmuster zeigen.
-	\item Quelltextbeispiele zeigen.
-	\item Hinweis: Wie in Kapitel~\ref{sec:Einleitung}: \nameref{sec:Einleitung} zitiert, wird nicht ein lauffähiges Programm bewertet, sondern die Projektdurchführung. Dennoch würde ich immer Quelltextausschnitte zeigen, da sonst Zweifel an der tatsächlichen Leistung des Prüflings aufkommen können.
-\end{itemize}
-
-\paragraph{Beispiel}
-Die Klasse \texttt{Com\-par\-ed\-Na\-tu\-ral\-Mo\-dule\-In\-for\-ma\-tion} findet sich im \Anhang{app:CNMI}.  
+Für die Umsetzung der eigentlichen Geschäftslogik wurden drei weitere Services auf Applikationsebene implementiert, damit auch hier die Testbarkeit
+und das \textit{single responsibility principle} eingehalten wird. Zwei Services für die Ressourcen \textit{PersonalInformation} und \textit{CommunicationPreference}
+werden, je nach erhaltener Nachricht im EventConsumer instanziiert und starten den Synchronisationsprozess, der jeweilig deserialisierten Nachricht.
+Desweiteren beinhalten diese Services die Logik der Erstellung von Synchroinsationshistorien.
+\par\smallskip
+Als letztes wurde der \textit{HubSpotContactService} entwickelt. Dieser beinhaltet den \textit{HubSpotApiClient} und führt die beiden genannten Ressourcen
+ein \textit{mapping} durch, womit diese in eine für \textit{HubSpot} lesbare Form gebracht werden. Fakt ist, dass ein Kontakt nur erstellt werden soll, wenn
+die Ressource \textit{PersonalInformation} das erste Mal synchronisiert wird. Aus diesem Grund wurden in dieser Klasse Methoden für das Erstellen und Aktualisieren
+von Kontakten implementiert. Wenn die \textit{contactId}, also die Identifikationsnummer für einen \textit{HubSpot} Kontakt null beträgt, wird ein Kontakt erstellt.
+Andernfalls wird der Kontakt mit der vorhandenen \textit{contactId} aktualisiert. Für den Fall, dass ein Kontakt mit der gegebenen E-Mail bereits in \textit{HubSpot}
+existiert, wurde ein \textit{\acs{RegEx}} eingebaut, welcher anhand des Inhalts, im \textit{\acs{Json}} Format einer API Antwort mit Statuscode 409, die existierende
+Indentifikationsnummer extrahiert und zurückgibt. Die \textit{contactId} wird schließlich in dem \textit{UserContactState} gespeichert, wodurch bei erneuter Datenänderung
+des Nutzers, nurnoch die Daten aktualisiert werden.
+\par\smallskip
+Siehe \Anhang{app:Logic}
