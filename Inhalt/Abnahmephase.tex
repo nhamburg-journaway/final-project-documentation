@@ -1,11 +1,27 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Abnahmephase} 
 \label{sec:Abnahmephase}
-
-\begin{itemize}
-	\item Welche Tests (\zB Unit-, Integrations-, Systemtests) wurden durchgeführt und welche Ergebnisse haben sie geliefert (\zB Logs von Unit Tests, Testprotokolle der Anwender)?
-	\item Wurde die Anwendung offiziell abgenommen?
-\end{itemize}
-
-\paragraph{Beispiel}
-Ein Auszug eines Unit Tests befindet sich im \Anhang{app:Test}. Dort ist auch der Aufruf des Tests auf der Konsole des Webservers zu sehen.
+Um zu versichern, dass Logik und Systemkomponenten wie gefordert funktionieren wurden der Applikation
+\textit{Nightcrawler} Unit- sowie Integrationstests hinzugefügt. Welche ebenfalls bei jedem push in einen
+pull-request durch pipelines ausgeführt werden, um nach jeder Änderung zu gewährleisten, dass die Logik sich nicht
+geändert hat. Beim Framework zum Testen handelt es sich um \textit{NSubstitute} mit \textit{xUnit} und der Erweiterung \textit{FluentAssertions},
+was ermöglicht Tests in lesbarer Form im Arrange, Act und Assert Schema zu schreiben. Außerdem wurden die Tests immer nach dem Muster 
+"zu testende public Methode_Zustand_Resultat" benannt, um damit einheitliche und verständliche Tests zu gewährleisten.
+\par\smallskip
+Pro .NET Projekt wurde ein neues Testprojekt für Unittests erstellt.
+Diese Art von Tests beschränken sich auf das Überprüfen von einzelnen Codeeinheiten. In diesem Fall wurde eine Unittestklasse
+pro zu testender Klasse erstellt. So erhält jede Testklasse eine echte Instanz der zu testenden Klasse, die aber mit 
+substituierten/gemockten Abhängigkeiten instanziiert werden, sodass sich beim Testen rein auf die zu testende Logik beschränkt werden konnte. 
+\par\smallskip
+Integrationstest bilden den realen Ablauf von Programmen ab. Um echte Kommunikationswege testen zu können wurden die Pakete \textit{Testcontainers.PostgreSql} und 
+\textit{Testcontainers.RabbitMQ} verwendet, die es ermöglichen Instanzen der jeweiligen Technologie mit Docker zu starten, welche in den Integrationstest, wie eine 
+echte Instanz angesprochen werden können.  
+\par\smallskip
+Im Anhang finden sich die Projektstruktur und Testbeispiele \Anhang{app:Test}.
+\par\smallskip
+Das Ergebnis dieser Tests ist das Erzielen einer Testabdeckung von 95 Prozent.
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.56]{coverage.png}\\
+\Anhang{app:Test}
+\end{figure} 

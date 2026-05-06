@@ -1,9 +1,10 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Einführungsphase}
 \label{sec:Einfuehrungsphase}
-
-\begin{itemize}
-	\item Welche Schritte waren zum Deployment der Anwendung nötig und wie wurden sie durchgeführt (automatisiert/manuell)?
-	\item Wurden \ggfs Altdaten migriert und wenn ja, wie?
-	\item Wurden Benutzerschulungen durchgeführt und wenn ja, Wie wurden sie vorbereitet?
-\end{itemize}
+Rahmenbedingung des Projektes ist nicht die Aufnahme der Software in den Livebetrieb, jedoch in das Testsystem. Aus diesem Grund wurden
+GitHub Pipelines implementiert, die alle Testpfade und eine statische Codeanalyse mit \textit{SonarQube} ausführen und bei erfolgreicher Reviewphase eines pull-requests, 
+die Änderungen automatisiert in den main branch des GitHub Repositories mergen.
+Gleichzeitig bedeutet dies, dass die Software auf einem Linux Debian basierten Server deployed und gehosted wird.
+Denn die Pipelines führen, nach bestehen aller Tests und des SonarQube Quality Gates, ein Deployment zu dem Testserver über \acs{SSH} aus. 
+\par\smallskip
+Im Anhang sind Ausschnitte der yml Dateien zu finden \Anhang{app:Pip}
