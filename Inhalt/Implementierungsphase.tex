@@ -1,6 +1,10 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Implementierung} 
 \label{sec:Implementierung}
+Dieser Abschnitt beschreibt, wie bei der Erstellung der Anwendung vorgegangen wurde. 
+Zuerst wurden die Datenbanksturkturen und Anbindung implementiert. Danach wurde der Microservice erstellt.
+Anschließend wurden die Message Broker Abhängigkeiten und der HTTP-Client für die Verbindung zum \acs{CRM} eingebaut.
+Schließlich wurden die Datenbankanfragen bzw. Synchronisationshistorie und die Geschäftslogik entwickelt.   
 
 \subsection{Implementierung der Datenstrukturen}
 \label{sec:ImplementierungDatenstrukturen}
@@ -65,6 +69,7 @@ So überprüft man für die \textit{SyncHistory} zum Beispiel anhand der \textit
 Wenn es keine gibt wird eine erstellt, andernfalls wird sie nur aktualisiert.
 \par\smallskip
 Siehe \Anhang{app:SyncHistory} für Code-Ausschnitte.
+
 
 \subsection{Implementierung der Geschäftslogik}
 \label{sec:ImplementierungGeschaeftslogik}

@@ -6,20 +6,29 @@ Um zu versichern, dass Logik und Systemkomponenten wie gefordert funktionieren w
 pull-request durch pipelines ausgeführt werden, um nach jeder Änderung zu gewährleisten, dass die Logik sich nicht
 geändert hat. Beim Framework zum Testen handelt es sich um \textit{NSubstitute} mit \textit{xUnit} und der Erweiterung \textit{FluentAssertions},
 was ermöglicht Tests in lesbarer Form im Arrange, Act und Assert Schema zu schreiben. Außerdem wurden die Tests immer nach dem Muster 
-"zu testende public Methode_Zustand_Resultat" benannt, um damit einheitliche und verständliche Tests zu gewährleisten.
-\par\smallskip
+'zu testende public Methode\_Zustand\_Resultat' benannt, um damit einheitliche und verständliche Tests zu gewährleisten.
+
+
+\subsection{Unittests}
+\label{sec:Unittests}
 Pro .NET Projekt wurde ein neues Testprojekt für Unittests erstellt.
 Diese Art von Tests beschränken sich auf das Überprüfen von einzelnen Codeeinheiten. In diesem Fall wurde eine Unittestklasse
 pro zu testender Klasse erstellt. So erhält jede Testklasse eine echte Instanz der zu testenden Klasse, die aber mit 
 substituierten/gemockten Abhängigkeiten instanziiert werden, sodass sich beim Testen rein auf die zu testende Logik beschränkt werden konnte. 
-\par\smallskip
+
+
+\subsection{Integrationstests}
+\label{sec:Integrationstests}
 Integrationstest bilden den realen Ablauf von Programmen ab. Um echte Kommunikationswege testen zu können wurden die Pakete \textit{Testcontainers.PostgreSql} und 
 \textit{Testcontainers.RabbitMQ} verwendet, die es ermöglichen Instanzen der jeweiligen Technologie mit Docker zu starten, welche in den Integrationstest, wie eine 
 echte Instanz angesprochen werden können.  
 \par\smallskip
 Im Anhang finden sich die Projektstruktur und Testbeispiele \Anhang{app:Test}.
-\par\smallskip
-Das Ergebnis dieser Tests ist das Erzielen einer Testabdeckung von 95 Prozent.
+
+
+\subsection{Test Ergebnisse}
+\label{sec:Ergebnisse}
+Das Ergebnis dieser Tests ist das Erzielen einer Testabdeckung von 95 Prozent und einer fehlerfreien Anwendung.
 \begin{figure}[htb]
 \centering
 \includegraphics[scale=0.56]{coverage.png}\\
