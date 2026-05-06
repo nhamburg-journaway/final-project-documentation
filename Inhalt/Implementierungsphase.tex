@@ -8,6 +8,12 @@ Die PostgreSQL Datenbank \textit{nightcrawler} wurde händisch über \textit{pgA
 Im Anschluss wurden mithilfe des Paketes \textit{\acs{EF-Core}}, innerhalb der Applikation Migrationen aus Beziehungen zwischen Entitäten erstellt und
 auf die Datenbank angewandt. Ebenfalls wurden dadurch die Tabellen und Eigenschaften angelegt.
 
+Formulierungsvorschlag: Im Anschluss wurde mit Hilfe des objekt-relationalen Mappers (ORM) EFCore eine Migration angelegt, die die Tabellen,
+Eigenschaften und Beziehungen zwischen Entitäten definiert. Diese Migration wurde auf die Datenbank angewandt.
+
+Kann: 
+Mit diesem Code-First-Ansatz liegt die Kontrolle über die Datenbankstruktur im versionierten Code.
+
 
 \subsection{Implementierung RabbitMQ}
 \label{sec:ImplementierungRabbitMQ}
@@ -34,6 +40,10 @@ Screenshots der Anwendung in Bezug auf \textit{RabbitMQ} befinden sich im \Anhan
 Um nach dem Empfangen eines Events die Synchronisierung in Richtung \textit{HubSpot} anzustoßen wird ein HTTP-Client benötigt.
 Dafür wurde der \textit{HubSpotApiClient} implementiert, welcher die zu sendenden Daten als Domänen-Model Parameter erhält, 
 diese als Body setzt und damit einen HTTP request ausführt. Dieser Client ermöglicht POST und PATCH Anfragen bzw. das Erstellen und Bearbeiten von Kontaktdatensätzen in \textit{HubSpot}.
+
+Formulierungsvorschlag: 
+Dafür wurder HubSpotApiClient implementiert, welcher Daten aus dem Domänen-Modell mappt und damit die Http-Requests ausführt. 
+
 \par\smallskip
 Damit die Anfragen die korrekte \textit{HubSpot} Instanz erreicht benötigt es eine \textit{BaseUrl}, also den ersten Teil einer \acs{URL}, 
 wodurch die Instanz angesprochen wird. Desweiteren wird der Kontaktpfad benötigt, also der Ort, an dem die Kontaktdaten verändert werden können.
@@ -47,6 +57,8 @@ Ausschnitte zum \textit{HubSpotApiClient} und \textit{HubSpotRateLimiter} sind i
 
 
 \subsection{Implementierung der Synchronisationshistorie}
+Vorschlag: Hier wäre eine kleine simple Abbildung hilfreich, um sich vorstellen zu können, wie die Abstraktionsebenen untereinander stehen.
+Denk dran, dein Publikum enstammt zu 80 Prozent aus nicht technischen Bereichen. 
 \label{sec:ImplementierungSync}
 Um die Synchronisationshistorie persistieren zu können wurden drei Abstraktionsebenen entwickelt, um auf allen Ebenen testbar zu bleiben
 und die Aufteilung von Infrastruktur und Applikationsebene zu erhalten. Konkret handelt es sich dabei um \textit{DbOperations}, \textit{Repositories}

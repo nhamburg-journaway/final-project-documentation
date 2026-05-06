@@ -28,8 +28,22 @@ Bei der ausgwählten Architektur handelt es sich um eine eine \texit{Orchestrato
 die Steuerung komplexer Arbeitsabläufe in Microservices zentralisiert auszuführen. Es gibt also ein Orchestrator Project,
 welches das Wissen über Konfigurationen beinhaltet, um andere Services zu registrieren und aufzurufen. Durch die Zentralisierung des Kontrollablaufs
 und die Entscheidungsgewalt über die nächsten Programmaufrufe, erleichtert der Orchestrator die Koordination verschiedener Services.    
+
+Anmerkung: Es wäre super, wenn es eine Abbildung dieser Architektur geben könnte. 
+Bspw. ein Clean-Architecture-Diagramm mit angehängtem Orchestrator-Projekt für die Service-Registrierung. 
+In der Implementierung sprichst du nämlich oft von verschiedenen Layern. 
+Ohne eine Vorstellung dieser Layer vorher ist es schwer sich vorzustellen, was genau du meinst. 
+
 \par\smallskip
 Die Entwicklung der Anwendung findet innerhalb des Microsoft .NET 10 Frameworks statt. 
+Anmerkung: Die Folgenden Zeilen können erheblich abgekürzt werden. Es ist unwichtig, was .NET 10 im einzelnen kann. 
+Überlege, was sind die tatsächlichen Gründe dafür, dass wir es einsetzen? 
+bspw. 
+* Alle Backend-Services werden bei uns in C# /.Net geschrieben
+* Cross-Platform runtime, die es uns ermöglicht, für die jeweilige Zielumgebung zu bauen (Linux/Debian) oder direkt Containerbasiert zu entwickeln. 
+* Hoher Funktionsumfang, der weitere Sprachen unnötig macht. 
+* mit .Net 10 aktuelle LTS-Version
+
 .NET 10, veröffentlicht am 11.  November 2025, ist ein plattformunabhängiges, modulares Framework, das die Entwicklung für Desktop, Web, Mobile, Cloud und IoT vereinfacht. 
 Es basiert auf dem SDK-Modell, das eine gleichzeitige Entwicklung und Ausführung auf Windows, Linux und macOS ermöglicht, 
 und integriert die Laufzeitkomponenten CoreCLR, CoreFX sowie ASP.NET Core. 
