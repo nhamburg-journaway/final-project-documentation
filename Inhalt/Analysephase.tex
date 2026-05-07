@@ -37,6 +37,9 @@ Die bisherige Situation soll also dahingehend verbessert werden, dass Kundendate
 nachvollziehbar und fehlertolerant synchronisiert werden können.
 Zusätzlich soll die neue Anwendung in der Lage sein, Konflikte bei gleichzeitigen Änderungen zu erkennen und nach festgelegten Regeln aufzulösen.
 
+Anmerkung: In dieser subsection sollte auch die Make-or-Buy-Entscheidung gefällt werden. Diese Abwägung findet hier bisher nicht statt. 
+Die IHK zieht einen ganzen Notenpunkt ab, wenn diese Wirtschaftliche Betrachtung komplett fehlt. 
+
 \subsection{Wirtschaftlichkeitsanalyse}
 \label{sec:Wirtschaftlichkeitsanalyse}
 Die Entwicklung des Microservices verursacht zunächst einmalige Projektkosten in Form von Arbeitszeit.
@@ -63,6 +66,9 @@ ergibt sich bei einem internen Stundensatz von 15,50 Euro Netto pro Stunde ein j
 
 Neben dieser direkten Einsparung entsteht zusätzlicher Nutzen durch eine höhere Datenqualität, bessere Nachvollziehbarkeit und eine geringere Fehleranfälligkeit.
 Das Projekt ist damit wirtschaftlich sinnvoll, da die Entwicklungskosten mittelfristig durch eingesparte Arbeitszeit und verbesserte Prozesse ausgeglichen werden können.
+
+Anmerkung: 
+Diesem Einsparpotenzial sollten die Kosten und der Nutzen einer möglichen Buy-Entscheidung gegenübergestellt werden. 
 
 \subsection{Anforderungsanalyse}
 \label{sec:Anforderungsanalyse}
@@ -101,7 +107,7 @@ soll diese Änderung nicht übernommen, sondern stattdessen eine neue Synchronis
 \subsection{Nutzwertanalyse}
 \label{sec:Nutzwertanalyse}
 Neben dem wirtschaftlichen Nutzen bietet das Projekt auch einen deutlichen nicht-monetären Mehrwert.
-Insbesondere die Datenqualität, die Nachvollziehbarkeit von Änderungen und die technische Stabilität der Synchronisation werden verbessert.
+Anmerkung: Dies ist kein richtiger Satz: >Insbesondere die Datenqualität, die Nachvollziehbarkeit von Änderungen und die technische Stabilität der Synchronisation werden verbessert.<
 \par\smallskip
 Vor der Umsetzung des Projektes besteht das Problem, dass Änderungen an Kundendaten nicht zentral nachvollzogen werden können.
 Außerdem ist die Synchronisation zwischen beiden Systemen nicht eigenständig abgesichert, wodurch Fehler bei der Übertragung schwerer zu erkennen sind.
@@ -111,9 +117,14 @@ Zur Bewertung des Nutzwertes werden die Kriterien Datenkonsistenz, Nachvollziehb
 Die folgende Matrix stellt einen Vorher-/Nachher-Vergleich dar:
 
 \tabelle{Vorher-/Nachher-Vergleich}{tab:Nutzwert}{Nutzwert.tex}
+Anmerkung: Hier fehlt der Nutzwert einer Buy-Entscheidungs-Möglichkeit
 
 Aus den Bewertungen ergibt sich, dass der Nutzen der neuen Anwendung vor allem in der zuverlässigeren Verarbeitung,
 der besseren Transparenz und der geringeren manuellen Abhängigkeit liegt.
 \par\smallskip
 Das Projekt verbessert somit nicht nur die technische Grundlage für die Synchronisation von Kundendaten,
 sondern schafft auch eine stabilere und besser wartbare Lösung für zukünftige Erweiterungen.
+
+
+Anmerkung: Wenn die Make-or-Buy Entscheidung getroffen wird, dann sollte noch erwähnt werden, warum der Nightcrawler "Nightcrawler" heißt. :D 
+Eine Kurze Referenz zum Teleportierenden Helden sollte reichen. 
