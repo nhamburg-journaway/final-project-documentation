@@ -24,33 +24,37 @@ Für genauere technische Abläufe siehe \Anhang{app:Flows}
 
 \subsection{Architekturdesign}
 \label{sec:Architekturdesign}
-Bei der ausgwählten Architektur handelt es sich um eine eine \texit{Orchestrator-Architektur}, die es ermöglicht
-die Steuerung komplexer Arbeitsabläufe in Microservices zentralisiert auszuführen. Es gibt also ein Orchestrator Project,
-welches das Wissen über Konfigurationen beinhaltet, um andere Services zu registrieren und aufzurufen. Durch die Zentralisierung des Kontrollablaufs
-und die Entscheidungsgewalt über die nächsten Programmaufrufe, erleichtert der Orchestrator die Koordination verschiedener Services.    
+Die Anwendung ist als mehrschichtige Microservice-Architektur aufgebaut.
+Innerhalb der Nightcrawler-Solution existiert ein eigenes Orchestrator-Projekt,
+welches den Start der Anwendung, die Konfiguration sowie die Registrierung der benötigten Services übernimmt.
+Dadurch werden technische Abhängigkeiten zentral verwaltet und die einzelnen Anwendungskomponenten klar voneinander getrennt.
 \par\smallskip
-Die Entwicklung der Anwendung findet innerhalb des Microsoft .NET 10 Frameworks statt. 
-.NET 10, veröffentlicht am 11.  November 2025, ist ein plattformunabhängiges, modulares Framework, das die Entwicklung für Desktop, Web, Mobile, Cloud und IoT vereinfacht. 
-Es basiert auf dem SDK-Modell, das eine gleichzeitige Entwicklung und Ausführung auf Windows, Linux und macOS ermöglicht, 
-und integriert die Laufzeitkomponenten CoreCLR, CoreFX sowie ASP.NET Core. 
-Die Funktionsweise wird durch CSharp 14 geprägt, das Sprachfeatures wie Primary Constructors für alle Typen, Params-Spans für die Speicheroptimierung und Lambda-Verbesserungen bietet. 
-Ein zentraler Meilenstein ist die Dateibasierte App-Unterstützung, die es erlaubt, einzelne *.cs-Dateien direkt auszuführen (dotnet run main.cs), 
-ohne eine traditionelle Projektdatei zu benötigen. 
-Dieses Framework wird regelmäßig erneuert, um den heutigen Standards gerecht zu werden. Außerdem bietet .NET eine große Auswahl an Funktionen und 
-ermöglicht mithilfe von weiteren NuGet Paketen, 
-wie zum Beispiel Entity Framework Core, eine vereinfachte Arbeit mit Entitäten aus Listen, Datenbanken und mehr. 
+Die fachliche Verarbeitung ist in mehrere Schichten aufgeteilt.
+Eingehende Ereignisse werden zunächst von der \textit{Presentation Layer} konsumiert und anschließend an die Anwendungsschicht weitergegeben.
+Dort wird der Synchronisationsablauf koordiniert.
+Die \textit{Domain Layer} enthält die fachlichen Modelle und Regeln,
+während die \textit{Infrastructure Layer} die technischen Anbindungen an externe Systeme wie RabbitMQ, HubSpot und PostgreSQL bereitstellt.
+\par\smallskip
+Abbildung~\ref{fig:ArchitekturNightcrawler} zeigt den vereinfachten Aufbau der Nightcrawler-Solution
+mit Orchestrator-Projekt, Anwendungsschichten und externen Schnittstellen.
+\par\smallskip
+Die Anwendung wird mit Microsoft .NET 10 und C\# entwickelt.
+Diese Technologie wurde gewählt, da alle Backend-Services im Unternehmen auf C\# und .NET basieren.
+Dadurch kann die neue Anwendung einheitlich in die bestehende Systemlandschaft integriert und von den vorhandenen Entwicklern gewartet werden.
+\par\smallskip
+Ein weiterer Grund für den Einsatz von .NET ist die plattformunabhängige Laufzeitumgebung.
+Die Anwendung kann dadurch sowohl lokal während der Entwicklung als auch in der Zielumgebung auf einem Linux-basierten System betrieben werden \cite.
+Zusätzlich unterstützt .NET die containerbasierte Entwicklung und Bereitstellung, was zur bestehenden Infrastruktur des Unternehmens passt.
+\par\smallskip
+Da .NET 10 eine aktuelle LTS-Version ist, eignet sich das Framework außerdem für eine langfristig wartbare Anwendung.
+Durch den großen Funktionsumfang und verfügbare NuGet-Pakete, beispielsweise für Datenbankzugriffe oder Resilienzmechanismen,
+können die Anforderungen des Projektes ohne den Einsatz weiterer Programmiersprachen umgesetzt werden.
+
 
 \subsection{Datenbankstruktur}
 \label{sec:Datenbankstruktur}
-
 Die Datenstruktur liegt zur Veranschaulichung im Folgenden als \acs{ERD} vor. Sie besteht aus zwei Tabellen \textit{SyncHistory} und \textit{UserContactState}, 
 welche in einer 1:n Beziehung zu einander stehen. Der \textit{UserContactState} beschreibt einen Nutzer, welcher mit \textit{HubSpot} verknüpft wird und die 
 \textit{SyncHistory} beschreibt alle Aktivitäten, die dieser Nutzer im Bezug auf dessen Daten gemacht hat.
 \par\smallskip
-Hier wird das \ac{ERD} zur \textit{nightcrawler} Datenbank dargestellt, welches Attribute, Relationen und die dazugehörigen Multiplizitäten enthält: 
-
-\begin{figure}[htb]
-\centering
-\includegraphics[scale=0.6]{NightcrawlerDbERD.png}\\
-\Anhang{app:ERD}
-\end{figure} 
+Siehe \Anhang{app:ERD} für das \ac{ERD} zur \textit{nightcrawler} Datenbank, welches Attribute, Relationen und die dazugehörigen Multiplizitäten enthält. 

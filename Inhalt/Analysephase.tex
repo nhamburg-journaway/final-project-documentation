@@ -1,4 +1,3 @@
-% !TEX root = ../Projektdokumentation.tex
 \section{Analyse} 
 \label{sec:Analyse}
 Im Folgenden wird zunächst die bisherige Situation im Unternehmen betrachtet.
@@ -24,22 +23,17 @@ Ebenso gibt es bisher keine eigenständige technische Lösung, um mit temporäre
 \par\smallskip
 Aus diesem Grund soll mit dem Projekt \textit{Nightcrawler} ein eigenständiger Microservice entwickelt werden,
 der die Synchronisation zwischen beiden Systemen übernimmt.
+Der Name ist an den teleportierenden Helden angelehnt, da die Anwendung Kundendaten kontrolliert zwischen zwei voneinander getrennten Systemen überträgt.
 Hierzu soll eine PostgreSQL-Datenbank eingeführt werden, in der sowohl der aktuelle Synchronisationszustand
-zwischen Benutzer und Kontakt, als auch die Historie aller Synchronisationsereignisse gespeichert wird.
+zwischen Benutzer und Kontakt als auch die Historie aller Synchronisationsereignisse gespeichert wird \cite{PostgreSQL16Docs}.
 \par\smallskip
-Außerdem soll die Kommunikation zwischen den beteiligten Systemen asynchron über RabbitMQ erfolgen.
-Dafür werden acht Event Queues benötigt:
-eine Queue für Änderungen vom \textit{user-service} in Richtung \textit{HubSpot},
-eine Queue für Änderungen von \textit{HubSpot} in Richtung \textit{user-service}
-sowie sechs weitere Queues, die jeweils pro Richtung für zwei erneute Versuche und einen Fehlschlag zuständig sind.
-\par\smallskip
-Die bisherige Situation soll also dahingehend verbessert werden, dass Kundendaten zwischen beiden Systemen automatisch,
-nachvollziehbar und fehlertolerant synchronisiert werden können.
-Zusätzlich soll die neue Anwendung in der Lage sein, Konflikte bei gleichzeitigen Änderungen zu erkennen und nach festgelegten Regeln aufzulösen.
+Die Kommunikation zwischen den beteiligten Systemen soll asynchron über RabbitMQ erfolgen.
+Die bisherige Situation wird dadurch verbessert, dass Kundendaten automatisch, nachvollziehbar und fehlertolerant synchronisiert werden können.
+Zusätzlich soll die neue Anwendung Konflikte bei gleichzeitigen Änderungen erkennen und nach festgelegten Regeln auflösen.
+
 
 \subsection{Wirtschaftlichkeitsanalyse}
 \label{sec:Wirtschaftlichkeitsanalyse}
-Die Entwicklung des Microservices verursacht zunächst einmalige Projektkosten in Form von Arbeitszeit.
 Für die Umsetzung des Projektes sind insgesamt 80 Stunden vorgesehen.
 Bei einem internen Verrechnungssatz von 35 Euro Netto pro Stunde ergeben sich folgende Entwicklungskosten:
 
@@ -47,12 +41,9 @@ Bei einem internen Verrechnungssatz von 35 Euro Netto pro Stunde ergeben sich fo
 80 \text{ Stunden} \times 35 \text{ Euro/Stunde} = 2800 \text{ Euro}
 \]
 
-Dem gegenüber steht der Nutzen, der sich aus der automatisierten Synchronisation von Kundendaten ergibt.
+Dem gegenüber steht der Nutzen der automatisierten Synchronisation.
 Ohne eine solche Lösung müssten Abweichungen zwischen den Datenbeständen manuell erkannt, überprüft und korrigiert werden.
 Dies würde insbesondere im Kundensupport und in der technischen Betreuung zusätzlichen Aufwand verursachen.
-\par\smallskip
-Zusätzlich sinkt durch die Anwendung das Risiko, dass veraltete oder fehlerhafte Kontaktdaten in einem der Systeme verwendet werden.
-Dadurch können Fehler in Folgeprozessen reduziert werden, beispielsweise bei der Kundenkommunikation oder bei der Darstellung von Informationen im Kundenportal.
 \par\smallskip
 Wird angenommen, dass durch die automatisierte Synchronisation wöchentlich 2,5 Stunden manueller Aufwand eingespart werden können,
 ergibt sich bei einem internen Stundensatz von 15,50 Euro Netto pro Stunde ein jährliches Einsparpotenzial von:
@@ -61,8 +52,28 @@ ergibt sich bei einem internen Stundensatz von 15,50 Euro Netto pro Stunde ein j
 2{,}5 \text{ Stunden/Woche} \times 15{,}50 \text{ Euro/Stunde} \times 52 \text{ Wochen} = 2015 \text{ Euro/Jahr}
 \]
 
-Neben dieser direkten Einsparung entsteht zusätzlicher Nutzen durch eine höhere Datenqualität, bessere Nachvollziehbarkeit und eine geringere Fehleranfälligkeit.
-Das Projekt ist damit wirtschaftlich sinnvoll, da die Entwicklungskosten mittelfristig durch eingesparte Arbeitszeit und verbesserte Prozesse ausgeglichen werden können.
+Die Amortisationsdauer der Eigenentwicklung beträgt damit:
+
+\[
+2800 \text{ Euro} \div 2015 \text{ Euro/Jahr} \approx 1{,}39 \text{ Jahre}
+\]
+
+Die Entwicklungskosten sind somit nach ungefähr 17 Monaten durch die eingesparte Arbeitszeit ausgeglichen.
+\par\smallskip
+Im Rahmen der Make-or-Buy-Entscheidung wurde außerdem geprüft, ob eine bestehende Integrationsplattform oder ein fertiger HubSpot-Connector eingesetzt werden kann.
+Eine solche Buy-Lösung hätte zwar einen geringeren Entwicklungsaufwand, würde jedoch laufende Lizenzkosten verursachen und könnte die projektspezifischen Anforderungen nur eingeschränkt erfüllen.
+Dazu zählen insbesondere die eigene Synchronisationshistorie, die definierte Konfliktbehandlung, die Retry-Logik sowie die enge Integration in die bestehende Systemarchitektur.
+\par\smallskip
+Für eine Buy-Lösung wird beispielhaft ein einmaliger Einrichtungsaufwand von 16 Stunden sowie ein monatlicher Lizenzbetrag von 250 Euro Netto angesetzt:
+
+\[
+16 \text{ Stunden} \times 35 \text{ Euro/Stunde} + 250 \text{ Euro/Monat} \times 12 \text{ Monate} = 3560 \text{ Euro}
+\]
+
+Damit liegen die Kosten der Buy-Lösung bereits im ersten Jahr über den Entwicklungskosten der Eigenentwicklung.
+Zusätzlich bietet die Eigenentwicklung einen höheren fachlichen Nutzen und eine bessere Erweiterbarkeit.
+Aus wirtschaftlicher und fachlicher Sicht wird daher die Eigenentwicklung des \textit{Nightcrawlers} umgesetzt.
+
 
 \subsection{Anforderungsanalyse}
 \label{sec:Anforderungsanalyse}
@@ -91,7 +102,7 @@ und der letzten erfolgreichen Synchronisation gespeichert werden.
 Technisch muss die Anwendung acht Event Queues über RabbitMQ verwenden.
 Da keine Nachrichten bei einem Neustart oder Ausfall verloren gehen sollen, müssen die Hauptqueues als durable Quorum Queues umgesetzt werden.
 Für temporäre Fehler soll eine Retry-Logik mit TTL-basierten Retry Queues eingesetzt werden.
-Nicht behandelbare Fehler sollen in einer Dead-Letter-Queue abgelegt werden.
+Nicht behandelbare Fehler sollen in einer Dead-Letter-Queue abgelegt werden \cite{RabbitMQDocs}.
 \par\smallskip
 Zur Konfliktbehandlung soll eine optimistische Strategie verwendet werden.
 Wenn Daten in beiden Systemen unterschiedlich geändert wurden, soll der Datenstand des \textit{user-service} bevorzugt werden.
@@ -100,20 +111,14 @@ soll diese Änderung nicht übernommen, sondern stattdessen eine neue Synchronis
 
 \subsection{Nutzwertanalyse}
 \label{sec:Nutzwertanalyse}
-Neben dem wirtschaftlichen Nutzen bietet das Projekt auch einen deutlichen nicht-monetären Mehrwert.
-Insbesondere die Datenqualität, die Nachvollziehbarkeit von Änderungen und die technische Stabilität der Synchronisation werden verbessert.
-\par\smallskip
-Vor der Umsetzung des Projektes besteht das Problem, dass Änderungen an Kundendaten nicht zentral nachvollzogen werden können.
-Außerdem ist die Synchronisation zwischen beiden Systemen nicht eigenständig abgesichert, wodurch Fehler bei der Übertragung schwerer zu erkennen sind.
-Mit dem \textit{Nightcrawler} wird eine Lösung geschaffen, die Änderungen dokumentiert, Synchronisationszustände speichert und Fehlerfälle gezielt behandeln kann.
-\par\smallskip
-Zur Bewertung des Nutzwertes werden die Kriterien Datenkonsistenz, Nachvollziehbarkeit, Ausfallsicherheit, Wartbarkeit und Automatisierungsgrad betrachtet.
-Die folgende Matrix stellt einen Vorher-/Nachher-Vergleich dar:
+Neben dem wirtschaftlichen Nutzen bietet das Projekt auch einen nicht-monetären Mehrwert.
+Zur Bewertung werden die Kriterien Datenkonsistenz, Nachvollziehbarkeit, Ausfallsicherheit, Wartbarkeit und Automatisierungsgrad betrachtet.
+Dabei werden die bisherige Ist-Situation, eine mögliche Buy-Lösung und die Eigenentwicklung des \textit{Nightcrawlers} verglichen.
 
-\tabelle{Vorher-/Nachher-Vergleich}{tab:Nutzwert}{Nutzwert.tex}
+\tabelle{Nutzwertvergleich}{tab:Nutzwert}{Nutzwert.tex}
 
-Aus den Bewertungen ergibt sich, dass der Nutzen der neuen Anwendung vor allem in der zuverlässigeren Verarbeitung,
-der besseren Transparenz und der geringeren manuellen Abhängigkeit liegt.
-\par\smallskip
-Das Projekt verbessert somit nicht nur die technische Grundlage für die Synchronisation von Kundendaten,
-sondern schafft auch eine stabilere und besser wartbare Lösung für zukünftige Erweiterungen.
+Aus der Nutzwertanalyse ergibt sich, dass eine Buy-Lösung gegenüber der bisherigen Situation zwar eine Verbesserung darstellt,
+jedoch nicht alle projektspezifischen Anforderungen vollständig erfüllt.
+Die Eigenentwicklung erreicht den höchsten Nutzwert, da sie besonders bei Nachvollziehbarkeit, Konfliktbehandlung,
+Ausfallsicherheit und Anpassbarkeit an die bestehende Systemarchitektur Vorteile bietet.
+Die Entscheidung zugunsten des \textit{Nightcrawlers} wird dadurch zusätzlich bestätigt.

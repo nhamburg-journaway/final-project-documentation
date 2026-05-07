@@ -1,26 +1,33 @@
 \subsection{RabbitMQ}
 \label{app:RabbitMQConnection}
-\begin{figure}[htb]
+
+\begin{figure}[!htbp]
 \centering
-\includegraphicsKeepAspectRatio{RabbitMQConnection.png}{0.8}
-\caption{RabbitMQ \acs{DI} Registrierung}
-\end{figure}
-\clearpage
-\begin{figure}[htb]
+
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{QueueInitializer.png}{0.84}
-\caption{Queue Initialisierung Hauptmethode}
-\end{figure}
-\clearpage
-\begin{figure}[htb]
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{RabbitMQConnection.png}
+\caption{RabbitMQ \acs{DI}-Registrierung}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{Publisher.png}{0.85}
-\caption{Event Publisher Hauptmethode}
-\end{figure}
-\clearpage
-\begin{figure}[htb]
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{QueueInitializer.png}
+\caption{Queue-Initialisierung}
+\end{minipage}
+
+\vspace{0.5em}
+
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{Consumer.png}{0.84}
-\caption{Event Consumer Hauptmethode}
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{Publisher.png}
+\caption{Event Publisher}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{Consumer.png}
+\caption{Event Consumer}
+\end{minipage}
+
 \end{figure}
-\clearpage

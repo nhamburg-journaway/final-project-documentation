@@ -1,23 +1,33 @@
 \subsection{Pipelines und Automatisierung}
 \label{app:Pip}
-\begin{figure}[htb]
+
+\begin{figure}[!htbp]
 \centering
-\includegraphicsKeepAspectRatio{testPip.png}{0.7}
-\caption{Tests und statische Codeanalyse}
-\end{figure}
-\begin{figure}[htb]
+
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{prepareDeployPip.png}{0.7}
-\caption{Docker Images vorbereiten}
-\end{figure}
-\begin{figure}[htb]
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{testPip.png}
+\caption{Tests und Codeanalyse}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{versioningPip.png}{0.67}
-\caption{Versionierung und Deployaufruf}
-\end{figure}
-\begin{figure}[htb]
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{prepareDeployPip.png}
+\caption{Docker Images}
+\end{minipage}
+
+\vspace{0.5em}
+
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{deploySSHPip.png}{0.67}
-\caption{Deployment mit SSH}
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{versioningPip.png}
+\caption{Versionierung}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.23\textheight,keepaspectratio]{deploySSHPip.png}
+\caption{Deployment per SSH}
+\end{minipage}
+
 \end{figure}
-\clearpage

@@ -1,14 +1,14 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Projektplanung} 
 \label{sec:Projektplanung}
-Um einen möglichst reibungslosen Ablauf in der Entwicklung des Microservices zu gewährleisten, braucht
-es eine gute Planung. In diesem Abschnitt wird daher aufgezeigt, welche Ressourcen (Zeit, Hardware)
-wie eingesetzt werden.
+Um einen strukturierten Ablauf des Projektes zu gewährleisten, werden in diesem Abschnitt
+die Projektphasen, Abweichungen vom Projektantrag, benötigte Ressourcen sowie der Entwicklungsprozess beschrieben.
 
 \subsection{Projektphasen}
 \label{sec:Projektphasen}
-Die Umsetzung des Projektes findet während zwei vier Wochen Sprints statt und wird gemäß der Vorgaben der IHK,
-wie in Tabelle~\ref{tab:Zeitplanung} dargestellt, innerhalb von 80 Stunden bearbeitet:
+Die Umsetzung des Projektes erfolgt innerhalb von zwei vierwöchigen Sprints.
+Gemäß den Vorgaben der IHK wird das Projekt, wie in Tabelle~\ref{tab:Zeitplanung} dargestellt,
+innerhalb von 80 Stunden bearbeitet.
 
 \paragraph{Zeitplanung}
 Tabelle~\ref{tab:Zeitplanung} zeigt die grobe Zeitplanung.
@@ -17,37 +17,25 @@ Eine detailliertere Zeitplanung findet sich im \Anhang{app:Zeitplanung}.
 
 \subsection{Abweichungen vom Projektantrag}
 \label{sec:AbweichungenProjektantrag}
-Bei dem Inhalt des Projektes wird die Anbindung von Hangfire mit der Anbindung von RabbitMQ ausgetauscht, 
-da bei der Planung erkannt wurde, dass Hangfire in der ersten Iteration nicht benötigt wird und sich bei der 
-Umsetzung der Event Queues auf den Message Broker RabbitMQ geeinigt wurde.
+Im Vergleich zum Projektantrag wurde die geplante Anbindung von Hangfire durch die Anbindung an RabbitMQ ersetzt.
+Während der Planung wurde festgestellt, dass Hangfire für die erste Iteration nicht benötigt wird.
+Da die Synchronisation ereignisbasiert erfolgen soll, wurde stattdessen RabbitMQ als Message Broker vorgesehen.
 
 \subsection{Ressourcenplanung}
 \label{sec:Ressourcenplanung}
-\textbf{Hardware}
-\begin{enumerate}
-	\item Büroarbeitsplatz
-	\item Netzwerk mit Internetzugang
-	\item Laptop und zwei weitere Bildschirme
-	\item Server für die Anwendung und Datenbank  
-\end{enumerate}
-\textbf{Software}
-\begin{enumerate}
-	\item Betriebssystem Laptop: Windows 11
-	\item Entwicklungsumgebung: JetBrains Rider 2026
-	\item Message Broker Software: RabbitMQ
-	\item Datenbanksoftware: PostgreSQL 16
-	\item Zielbetriebssystem: Linux Debian 12.13
-	\item Software zum generieren und einsehen von Testdaten auf der Datenbank: HeidiSQL & pgAdmin 4  
-\end{enumerate}
-\textbf{Personal}
-\begin{enumerate}
-	\item Für die Qualitätssicherung während der Review- und Testphase werden zwei weitere Entwickler benötigt.  
-\end{enumerate}
+Für die Durchführung des Projektes werden ein Büroarbeitsplatz mit Internetzugang,
+ein Entwicklungsgerät mit zusätzlichen Bildschirmen sowie Serverressourcen für Anwendung und Datenbank benötigt.
+Als Software kommen Windows 11, JetBrains Rider 2026, RabbitMQ, PostgreSQL 16,
+Debian 12.13 sowie HeidiSQL und pgAdmin 4 zur Datenbankverwaltung zum Einsatz.
+\par\smallskip
+Zusätzlich werden während der Review- und Testphase zwei weitere Entwickler zur Qualitätssicherung einbezogen.
 
 \subsection{Entwicklungsprozess}
 \label{sec:Entwicklungsprozess}
-Während der Umsetzung des Projektes wird ein agiler Prozess bzw. Scrum verfolgt. 
-Dies ist ein Prozess, bei dem iterativ kleinere Abschnitte eines Auftrages fertiggestellt werden,
-wodurch schnell auf unvorhergesehene Probleme oder neue Anforderungen eingegangen werden kann.
-Scrum zeichnet sich durch eine hohe Flexibilität aus und eignet sich gut für kleine Projekte bzw. Teams.  
-
+Während der Umsetzung wird ein agiler Entwicklungsprozess nach Scrum verwendet.
+Das Projekt wird dabei in kleinere Arbeitspakete aufgeteilt, die innerhalb der Sprints umgesetzt werden.
+Dadurch kann flexibel auf technische Probleme oder geänderte Anforderungen reagiert werden.
+\par\smallskip
+Die Planung und Nachverfolgung der Aufgaben erfolgt über Tickets auf einem Jira-Board.
+Die Tickets beschreiben die einzelnen Arbeitspakete und dienen während des Projektes zur Fortschrittskontrolle.
+Eine Übersicht der verwendeten Tickets befindet sich im \Anhang{app:Tickets}.

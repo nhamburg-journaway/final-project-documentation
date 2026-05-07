@@ -1,18 +1,26 @@
-% !TEX root = ../Projektdokumentation.tex
 \section{Dokumentation}
 \label{sec:Dokumentation}
-In diesem Abschnitt wird auf die im Rahmen des Projektes erstellte Entwicklerdokumentation eingegangen.
-
+In diesem Abschnitt wird auf die im Rahmen des Projektes erstellte und ergänzte Dokumentation eingegangen.
 
 \subsection{Entwicklerdokumentation}
 \label{sec:Entwicklerdokumentation}
-Da die Anwendung nicht direkt von Nutzern ansprechbar ist benötigt sie keine Anwenderdokumentation.
-Lediglich Entwickler müssen wissen, wie man die Anwendung verwendet. Aus diesem Grund wurde eine Entwicklerdokumentation
-in Form einer README.md erstellt.
+Da die Anwendung nicht direkt von Endbenutzern bedient wird, ist keine klassische Anwenderdokumentation erforderlich.
+Stattdessen wurde eine Entwicklerdokumentation in Form einer \textit{README.md} erstellt.
+Diese richtet sich an Entwickler, die die Anwendung lokal starten, konfigurieren oder erweitern möchten.
 \par\smallskip
-Die README.md Datei enthält eine detaillierte Anleitung für die Nutzung der Anwendung bestehend
-aus den Voraussetzungen für das erfolgreiche starten, einer Quick Start Anleitung, der Projektstruktur,
-einer Auflistung aller verwendeten Konfigurationseinstellungen und Umgebungsvariablen, sowie einer Anleitung für 
-das Starten der Applikation mit Docker Compose.
+Die \textit{README.md} enthält die Voraussetzungen für den erfolgreichen Start der Anwendung,
+eine Quick-Start-Anleitung, die Projektstruktur, eine Übersicht der verwendeten Konfigurationseinstellungen
+und Umgebungsvariablen sowie eine Anleitung zum Starten der Anwendung mit Docker Compose \cite{DockerComposeDocs}.
 \par\smallskip
-Ein Ausschnitt aus der erstellten Benutzerdokumentation befindet sich im \Anhang{app:EntwicklerDoku}. 
+Zusätzlich zur externen Entwicklerdokumentation wurde die Dokumentation im Quellcode ergänzt.
+Dazu gehören insbesondere XML-Summaries an zentralen Interfaces und Klassen,
+da diese Bestandteil der unternehmensinternen Quellcode-Standards sind.
+Dadurch können Entwickler die Verantwortlichkeiten wichtiger Komponenten direkt im Code nachvollziehen.
+\par\smallskip
+Weitere projektbezogene Informationen, wie fachliche Vorüberlegungen und Architekturentscheidungen,
+wurden im unternehmensinternen Confluence dokumentiert. 
+Diese Dokumente dienen als ergänzende Entscheidungsgrundlage, wurden jedoch nicht vollständig im Rahmen dieser Projektdokumentation erstellt.
+Die im Projekt entstandene Anwendung wurde außerdem in die unternehmensinterne Architekturübersicht aufgenommen,
+damit der Service nach Projektabschluss weiterhin auffindbar und in der Systemlandschaft nachvollziehbar bleibt.
+\par\smallskip
+Ein Ausschnitt aus der erstellten Entwicklerdokumentation befindet sich im \Anhang{app:EntwicklerDoku}.

@@ -14,9 +14,11 @@ Die Funktionalität und Einhaltung der Anforderungen wurde somit erfüllt.
 \par\smallskip
 Bei der Einhaltung der Projektplanung ist es im Hinblick auf Zeit und Kosten zu Abweichungen gekommen. 
 So wurde das Zeitlimit, um fünf Stunden überschritten und die Kosten sind dazu proportional um 175 Euro gestiegen. 
-Dies liegt daran, dass die Nutzung der Technologie \textit{RabbitMQ} und den einhergehenden Voraussetzungen im Unternehmen bisher wenig erforscht war.
-Weshalb dieses Projekt als ein Beispiel für die zukünftige Nutzung von Message Brokern und Event Queues dienen wird.
-Aufgrund der Unerfahrenheit ist es dementsprechend bei der Programmierung und der Reviewphase zu Verzögerungen gekommen. 
+Grund ist, dass die Umstellung vom im Projektantrag erwähnten Hangfire-System auf ein EventQueue-basiertes System 
+wie RabbitMQ neue Herausforderungen mit sich brachte. Zum einen war die Technologie im Unternehmen bisher nicht im Einsatz, 
+wodurch ein erhebliches mehr in Einarbeitung geleistet werden musste.
+Zum anderen wurde klar, dass die Implementierung in diesem Prototypen als Beispielimplementierung für andere unternehmensinterne Projekte dienen kann,
+weswegen das Projekt mehr Review-Zyklen als üblich unterstand. 
 \par\smallskip
 Wie in Tabelle~\ref{tab:Vergleich} zu erkennen ist, konnte die Zeitplanung nicht eingehalten werden.
 \tabelle{Soll-/Ist-Vergleich}{tab:Vergleich}{Zeitnachher.tex}
@@ -26,7 +28,7 @@ Wie in Tabelle~\ref{tab:Vergleich} zu erkennen ist, konnte die Zeitplanung nicht
 \label{sec:LessonsLearned}
 Der Prüfling hat bei der Durchführung des Projektes gelernt realistischere Einschätzungen zu machen in Bezug
 auf die Zeitplanung bei bisher unbekannten Technologien.
-Außerdem ist dem Prüfling nun der Umgang mit \textit{RabbitMQ}, den einhergehenden Topologien und Einstellungen 
+Außerdem ist dem Prüfling nun der Umgang mit RabbitMQ, den einhergehenden Topologien und Einstellungen 
 für Queues vertraut.
 Zudem kann der Prüfling zukünftlich für Fragen in diesem Bereich zur Seite stehen und anderen Entwicklern bei der 
 Implementierung helfen.  
@@ -34,8 +36,11 @@ Implementierung helfen.
 
 \subsection{Ausblick}
 \label{sec:Ausblick}
-Im Rahmen des Projektes wurde sich bei der zu übertragenen Datenvielfalt zurückgehalten.
-Zukünftlich soll also eine Erweiterung implementiert werden, bei der weitere kundenspezifische Daten
-synchronisiert werden.
-Des Weiteren könnte man zur Kundendatenabfrage eine REST-API einbauen, welche es ermöglicht, die 
-zentralisiert gespeicherten Daten auch in anderen Bereichen zu erfragen. 
+Im Rahmen des Projektes wurde die Anzahl der zu synchronisierenden Datenfelder bewusst begrenzt.
+Zukünftig kann die Anwendung erweitert werden, sodass weitere kundenspezifische Daten zwischen den beteiligten Systemen synchronisiert werden.
+Dadurch könnte der manuelle Pflegeaufwand in weiteren Prozessen zusätzlich reduziert werden.
+\par\smallskip
+Eine weitere mögliche Erweiterung besteht darin, die gespeicherte Synchronisationshistorie gezielter auszuwerten.
+Über eine interne Schnittstelle oder ein Dashboard könnten beispielsweise fehlgeschlagene Synchronisationen,
+wiederholte Verarbeitungsversuche oder häufig auftretende Konflikte sichtbar gemacht werden.
+Dadurch könnten technische Fehler schneller erkannt und die Datenqualität langfristig besser überwacht werden.

@@ -1,19 +1,32 @@
 \subsection{Synchronisationshistorie}
 \label{app:SyncHistory}
-\begin{figure}[htb]
+
+\begin{figure}[!htbp]
 \centering
-\includegraphicsKeepAspectRatio{DbOperation.png}{0.9}
-\caption{DbOperation SyncHistory}
+\includegraphics[width=0.85\textwidth,height=0.35\textheight,keepaspectratio]{dreiEbenen.png}
+\caption{Drei Abstraktionsebenen zur Persistierung der Synchronisationshistorie}
+\label{fig:DreiEbenenSyncHistory}
 \end{figure}
-\clearpage
-\begin{figure}[htb]
+
+\begin{figure}[!htbp]
 \centering
-\includegraphicsKeepAspectRatio{Repository.png}{1}
-\caption{Repository SyncHistory}
-\end{figure}
-\clearpage
-\begin{figure}[htb]
+
+\begin{minipage}[t]{0.32\textwidth}
 \centering
-\includegraphicsKeepAspectRatio{Service.png}{0.8}
-\caption{Service SyncHistory}
+\includegraphics[width=\linewidth,height=0.32\textheight,keepaspectratio]{DbOperation.png}
+\caption{DbOperation}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.32\textheight,keepaspectratio]{Repository.png}
+\caption{Repository}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.32\textheight,keepaspectratio]{Service.png}
+\caption{Service}
+\end{minipage}
+
 \end{figure}

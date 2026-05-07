@@ -6,23 +6,25 @@ Zuerst wurden die Datenbanksturkturen und Anbindung implementiert. Danach wurde 
 Anschließend wurden die Message Broker Abhängigkeiten und der HTTP-Client für die Verbindung zum \acs{CRM} eingebaut.
 Schließlich wurden die Datenbankanfragen bzw. Synchronisationshistorie und die Geschäftslogik entwickelt.   
 
+
 \subsection{Implementierung der Datenstrukturen}
 \label{sec:ImplementierungDatenstrukturen}
 Die PostgreSQL Datenbank \textit{nightcrawler} wurde händisch über \textit{pgAdmin 4} angelegt und nutzt die \textit{libpq-15.dll} Bibliothek. 
-Im Anschluss wurden mithilfe des Paketes \textit{\acs{EF-Core}}, innerhalb der Applikation Migrationen aus Beziehungen zwischen Entitäten erstellt und
-auf die Datenbank angewandt. Ebenfalls wurden dadurch die Tabellen und Eigenschaften angelegt.
+Im Anschluss wurde mit Hilfe des objekt-relationalen Mappers (\acs{ORM}) \acs{EFCore} eine Migration angelegt, die die Tabellen,
+Eigenschaften und Beziehungen zwischen Entitäten definiert \cite{MicrosoftEfCoreDocs}. Diese Migration wurde auf die Datenbank angewandt.
+Mit diesem Code-First-Ansatz liegt die Kontrolle über die Datenbankstruktur im versionierten Code.
 
 
 \subsection{Implementierung RabbitMQ}
 \label{sec:ImplementierungRabbitMQ}
 Für die Verbindung zwischen dem Microservice \textit{Nightcrawler} und dem Message Broker \textit{RabbitMQ} wurde mithilfe von 
-Serviceregistrierung in der \acs{DI}-Klasse eine \textit{IConnectionFactory} als Singleton mit den Applikationseinstellungen registriert.
+Serviceregistrierung in der \acs{DI}-Klasse eine IConnectionFactory als Singleton mit den Applikationseinstellungen registriert.
 Durch die Registrierung als Singleton können alle Klassen, die eine Verbindung zu \textit{RabbitMQ} benötigen, mit Dependency Injection
 dieselbe Instanz erzeugen. Dadurch müssen nicht alle Klassen die Einstellungen kennen, um die richtige \textit{RabbitMQ} Instanz anzusprechen.
 \par\smallskip
-Um die verschiedenen Queues zu initialisieren wurde ein QueueInitializer erstellt, welcher als \textit{IHostedService} implementiert wird,
+Um die verschiedenen Queues zu initialisieren wurde ein QueueInitializer erstellt, welcher als IHostedService implementiert wird,
 um beim Start der Applikation die Queues zu erstellen bzw. zu versichern, dass sie vorhanden sind. Innerhalb dieses Services wird die Topologie
-für \textit{RabbitMQ} verwaltet. Hier werden die \textit{MainQueues}, \textit{RetryQueues} und \textit{\ac{DLQ}'s} erstellt, die später für
+für \textit{RabbitMQ} verwaltet. Hier werden die MainQueues, RetryQueues und \ac{DLQ}'s erstellt, die später für
 den Eventverkehr und das Errorhandling benötigt werden.
 \par\smallskip
 Als letztes werden EventPublisher und EventConsumer benötigt, um Events senden und empfangen zu können.
@@ -36,25 +38,26 @@ Screenshots der Anwendung in Bezug auf \textit{RabbitMQ} befinden sich im \Anhan
 \subsection{Implementierung des HTTP-Clients}
 \label{sec:ImplementierungHTTPClient}
 Um nach dem Empfangen eines Events die Synchronisierung in Richtung \textit{HubSpot} anzustoßen wird ein HTTP-Client benötigt.
-Dafür wurde der \textit{HubSpotApiClient} implementiert, welcher die zu sendenden Daten als Domänen-Model Parameter erhält, 
-diese als Body setzt und damit einen HTTP request ausführt. Dieser Client ermöglicht POST und PATCH Anfragen bzw. das Erstellen und Bearbeiten von Kontaktdatensätzen in \textit{HubSpot}.
+Dafür wurde der HubSpotApiClient implementiert, welcher Daten aus dem Domänen-Modell mappt und damit die Http-Requests ausführt. 
+Dieser Client ermöglicht POST und PATCH Anfragen bzw. das Erstellen und Bearbeiten von Kontaktdatensätzen in \textit{HubSpot} \cite{HubSpotApiDocs}.
 \par\smallskip
 Damit die Anfragen die korrekte \textit{HubSpot} Instanz erreicht benötigt es eine \textit{BaseUrl}, also den ersten Teil einer \acs{URL}, 
 wodurch die Instanz angesprochen wird. Desweiteren wird der Kontaktpfad benötigt, also der Ort, an dem die Kontaktdaten verändert werden können.
 \textit{HubSpot} benötigt für ihre Schnittstellen eine Authorisierung, weshalb der Authorization Header mit Bearer und einem Zugriffstoken für diese HTTP-Anfragen
 zusätzlich benötigt wird.
 \par\smallskip
-Um schließlich alle Anforderungen zu erfüllen wurde ein \textit{HubSpotRateLimiter} implementiert, der dafür sorgt, dass die von \textit{HubSpot}
+Um schließlich alle Anforderungen zu erfüllen wurde ein HubSpotRateLimiter implementiert, der dafür sorgt, dass die von \textit{HubSpot}
 festgelegten Anfragebegrenzungen nicht überschritten werden und somit keine Anfragen unnötig fehlschlagen oder verloren gehen.
 \par\smallskip
-Ausschnitte zum \textit{HubSpotApiClient} und \textit{HubSpotRateLimiter} sind im \Anhang{app:HubSpot} zu finden.
+Ausschnitte zum HubSpotApiClient und HubSpotRateLimiter sind im \Anhang{app:HubSpot} zu finden.
 
 
 \subsection{Implementierung der Synchronisationshistorie}
 \label{sec:ImplementierungSync}
-Um die Synchronisationshistorie persistieren zu können wurden drei Abstraktionsebenen entwickelt, um auf allen Ebenen testbar zu bleiben
-und die Aufteilung von Infrastruktur und Applikationsebene zu erhalten. Konkret handelt es sich dabei um \textit{DbOperations}, \textit{Repositories}
-und Services jeweils pro, den bereits genannten \textit{SyncHistory} und \textit{UserContactState}.
+Um die Synchronisationshistorie dauerhaft speichern und gleichzeitig eine gute Testbarkeit gewährleisten zu können,
+wurde die Implementierung in drei Abstraktionsebenen aufgeteilt.
+Diese Trennung sorgt dafür, dass fachliche Logik, technische Verarbeitung und direkter Datenbankzugriff voneinander getrennt bleiben.
+Abbildung~\ref{fig:DreiEbenenSyncHistory} zeigt den vereinfachten Aufbau dieser Ebenen.
 \par\smallskip
 Die \textit{DbOperations} befinden sich auf der niedrigsten Schicht und sie können einfache Abfragen auf Datenbankebene machen. 
 Außerdem sind neben Testklassen, die einzigen Klassen, die den \textit{DbContext} kennen.
@@ -62,7 +65,7 @@ Außerdem sind neben Testklassen, die einzigen Klassen, die den \textit{DbContex
 Bei den \textit{Repositories} handelt es sich, um Klassen, die \textit{DbOperations} implementieren und neben diesen Aufrufen Domänen-Models
 zu Infrastruktur-Models konvertieren. Zudem befindet sich das Logging, Retry- und Errorhandling auf dieser Ebene. Für die Retrylogik wurde das NuGet Paket \textit{Polly}
 verwendet, welches ermöglicht vorkonfigurierte \textit{ResiliencePipelines} zu implementieren, mit denen man fehlerhafte Aufrufe für eine bestimmte Anzahl
-an Wiederholungen erneut ausführen kann.
+an Wiederholungen erneut ausführen kann \cite{PollyDocs}.
 \par\smallskip
 Die Services beinhalten \textit{Repository}-Aufrufe, sowie minimale Logik, mit der \textit{Upserts} ermöglicht werden.
 So überprüft man für die \textit{SyncHistory} zum Beispiel anhand der \textit{EventId}, ob es bereits eine Historie gibt. 
@@ -74,12 +77,12 @@ Siehe \Anhang{app:SyncHistory} für Code-Ausschnitte.
 \subsection{Implementierung der Geschäftslogik}
 \label{sec:ImplementierungGeschaeftslogik}
 Für die Umsetzung der eigentlichen Geschäftslogik wurden drei weitere Services auf Applikationsebene implementiert, damit auch hier die Testbarkeit
-und das \textit{single responsibility principle} eingehalten wird. Zwei Services für die Ressourcen \textit{PersonalInformation} und \textit{CommunicationPreference}
+und das \textit{single responsibility principle} eingehalten wird \cite{CleanCodeDeveloperGrade}. Zwei Services für die Ressourcen \textit{PersonalInformation} und \textit{CommunicationPreference}
 werden, je nach erhaltener Nachricht im EventConsumer instanziiert und starten den Synchronisationsprozess, der jeweilig deserialisierten Nachricht.
 Desweiteren beinhalten diese Services die Logik der Erstellung von Synchroinsationshistorien.
 \par\smallskip
-Als letztes wurde der \textit{HubSpotContactService} entwickelt. Dieser beinhaltet den \textit{HubSpotApiClient} und führt die beiden genannten Ressourcen
-ein \textit{mapping} durch, womit diese in eine für \textit{HubSpot} lesbare Form gebracht werden. Fakt ist, dass ein Kontakt nur erstellt werden soll, wenn
+Als letztes wurde der HubSpotContactService entwickelt. Dieser beinhaltet den HubSpotApiClient und führt die beiden genannten Ressourcen
+ein mapping durch, womit diese in eine für \textit{HubSpot} lesbare Form gebracht werden. Fakt ist, dass ein Kontakt nur erstellt werden soll, wenn
 die Ressource \textit{PersonalInformation} das erste Mal synchronisiert wird. Aus diesem Grund wurden in dieser Klasse Methoden für das Erstellen und Aktualisieren
 von Kontakten implementiert. Wenn die \textit{contactId}, also die Identifikationsnummer für einen \textit{HubSpot} Kontakt null beträgt, wird ein Kontakt erstellt.
 Andernfalls wird der Kontakt mit der vorhandenen \textit{contactId} aktualisiert. Für den Fall, dass ein Kontakt mit der gegebenen E-Mail bereits in \textit{HubSpot}
