@@ -1,12 +1,18 @@
 % !TEX root = ../Projektdokumentation.tex
 \section{Dokumentation}
 \label{sec:Dokumentation}
+In diesem Abschnitt wird auf die im Rahmen des Projektes erstellte Entwicklerdokumentation eingegangen.
 
-\begin{itemize}
-	\item Wie wurde die Anwendung für die Benutzer/Administratoren/Entwickler dokumentiert (\zB Benutzerhandbuch, \acs{API}-Dokumentation)?
-	\item Hinweis: Je nach Zielgruppe gelten bestimmte Anforderungen für die Dokumentation (\zB keine IT-Fachbegriffe in einer Anwenderdokumentation verwenden, aber auf jeden Fall in einer Dokumentation für den IT-Bereich).
-\end{itemize}
 
-\paragraph{Beispiel}
-Ein Ausschnitt aus der erstellten Benutzerdokumentation befindet sich im \Anhang{app:BenutzerDoku}.
-Die Entwicklerdokumentation wurde mittels PHPDoc\footnote{Vgl. \cite{phpDoc}} automatisch generiert. Ein beispielhafter Auszug aus der Dokumentation einer Klasse findet sich im \Anhang{app:Doc}. 
+\subsection{Entwicklerdokumentation}
+\label{sec:Entwicklerdokumentation}
+Da die Anwendung nicht direkt von Nutzern ansprechbar ist benötigt sie keine Anwenderdokumentation.
+Lediglich Entwickler müssen wissen, wie man die Anwendung verwendet. Aus diesem Grund wurde eine Entwicklerdokumentation
+in Form einer README.md erstellt.
+\par\smallskip
+Die README.md Datei enthält eine detaillierte Anleitung für die Nutzung der Anwendung bestehend
+aus den Voraussetzungen für das erfolgreiche starten, einer Quick Start Anleitung, der Projektstruktur,
+einer Auflistung aller verwendeten Konfigurationseinstellungen und Umgebungsvariablen, sowie einer Anleitung für 
+das Starten der Applikation mit Docker Compose.
+\par\smallskip
+Ein Ausschnitt aus der erstellten Benutzerdokumentation befindet sich im \Anhang{app:EntwicklerDoku}. 
